@@ -3,24 +3,39 @@ using System.Collections;
 
 public class MoveEnemy : MonoBehaviour {
 
+    public Transform GameCharacter;
+    public float speed;
     Vector3 EndPoint;
     bool Moving;
-    float RandomXEndPoint;
+
 
 
 	// Use this for initialization
 	void Start () {
 
         Moving = false;
-        EndPoint = new Vector3(46f, transform.position.y, 34f);
+        EndPoint = new Vector3(46f, 0, 34f);
 
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        RandomXEndPoint = Random.Range(-4f, 4f);
-        Vector3 Direction = new Vector3(transform.position.x + RandomXEndPoint, EndPoint.y, EndPoint.z);
-        
-	
-	}
+
+        Vector3 Direction = EndPoint - transform.position;
+        Direction.Normalize();
+        transform.LookAt(EndPoint);
+        GameCharacter.GetComponent<Animation>().CrossFade("run");
+        float TargetPosition = Vector3.Distance(transform.position, EndPoint);
+
+        if (TargetPosition > 0.3f)
+        {
+            transform.Translate(Direction * speed, Space.World);
+        }
+        else
+        {
+            GameCharacter.GetComponent<Animation>().CrossFade("stand");
+
+        }
+
+    }
 }
