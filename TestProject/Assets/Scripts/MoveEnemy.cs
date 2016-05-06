@@ -7,6 +7,7 @@ public class MoveEnemy : MonoBehaviour {
     public float speed;
     public float Health;
     public float PAttack;
+	float SphereCastTimer = 1.5f;
 
     Vector3 EndPoint;
 
@@ -84,23 +85,31 @@ public class MoveEnemy : MonoBehaviour {
     void NonTargetMove()
         // Движение Enemy без цели
     {
-        if (NonTarget == true)
-        {
-            MoveTo();
+		if (NonTarget == true) {
+			MoveTo ();
+			SphereCastTimer -= Time.deltaTime;
 
-            RaycastHit hit;
-            if (Physics.SphereCast(transform.position, 5f, transform.forward, out hit, 5f))
+			if (SphereCastTimer < 0) 
+			{
+				RaycastHit hit;
+				if (Physics.SphereCast (transform.position, 5f, transform.forward, out hit, 5f))
             // С помощью СферКаста ищем ближайший тег миньона, либо игрока, либо ворот
-            // берем выбранный обьект в таргет
-            {
-                if (hit.transform.tag == "Player" || hit.transform.tag == "Minion" || hit.transform.tag == "Gate")
-                {
-                    Target = hit.transform.gameObject;
-                    NonTarget = false;
+					// берем выбранный обьект в таргет
+				{     
+					if (hit.transform.tag == "Player" || hit.transform.tag == "Minion" || hit.transform.tag == "Gate") {
+						Target = hit.transform.gameObject;
+						NonTarget = false;
+
                     
-                }
-            }
-        }
+					} 
+					else
+					{
+						SphereCastTimer = 2f;
+
+					}
+				}
+			}
+		}
 
 
     }
