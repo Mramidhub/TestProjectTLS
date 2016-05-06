@@ -27,7 +27,7 @@ public class Move : MonoBehaviour {
 
             if (Physics.Raycast(ray, out EndPoint, Mathf.Infinity))
             {
-                EndPosition = EndPoint.point;
+                EndPosition = EndPoint.point; 
             }
 
         }
@@ -37,11 +37,12 @@ public class Move : MonoBehaviour {
             Vector3 Direction = EndPosition - transform.position;
             Direction.Normalize();
             transform.LookAt(EndPosition);
-            GameCharacter.GetComponent<Animation>().CrossFade("Run");
+			GameCharacter.GetComponent<Animation>().CrossFade("Run");
             float TargetPosition = Vector3.Distance(transform.position, EndPosition);
             if (TargetPosition > 0.3f)
             {
-                transform.Translate(Direction * speed, Space.World);
+				
+				transform.Translate(Direction * speed,  Space.World);
             }
             else
             {

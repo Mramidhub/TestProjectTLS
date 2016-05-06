@@ -5,7 +5,7 @@ public class MoveMinion : MonoBehaviour {
 
     public Transform GameCharacter;
     public float speed;
-    public float Health;
+    public float Health = 200;
     public float PAttack;
 
     Vector3 EndPoint;
@@ -32,12 +32,25 @@ public class MoveMinion : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
-        NonTargetMove();
-        MoveToTarget();
-        Dead();
-
+		if (NonTarget == true)
+		{
+			NonTargetMove ();
+		}
+		if (NonTarget == false) 
+		{
+			MoveToTarget ();
+		}
+		if (Health <= 0) 
+		{
+			Dead ();
+		}
     }
+
+	void FixedUpdate()
+	{
+
+
+	}
 
     void RandomEndPoint()
     {
@@ -83,15 +96,18 @@ public class MoveMinion : MonoBehaviour {
 
     void AttackTarget()
     {
-        if (Vector3.Distance(Target.GetComponent<Transform>().position, transform.position) < 4f)
+        if (Vector3.Distance(Target.GetComponent<Transform>().position, transform.position) < 1.5f)
         {
             GameCharacter.GetComponent<Animation>().CrossFade("attack");
             Target.GetComponent<MoveEnemy>().Health -= PAttack*Time.deltaTime;
-            if (Target.GetComponent<MoveEnemy>().IDead == true)
+			if (Target.GetComponent<MoveEnemy>().Health < 0)
             {
                 NonTarget = true;   
             }
-
+			else
+			{
+				NonTarget = false;
+			}
         }
     }
 
@@ -101,9 +117,22 @@ public class MoveMinion : MonoBehaviour {
     {
         if (NonTarget == true)
         {
+			float random = 1f;
+			Vector3 RandomSide;
+			random -= Time.deltaTime;
+
+			if (random < 0.5) {
+				RandomSide = transform.forward;
+				random = 1f;
+			}
+			else
+			{
+				RandomSide = transform.forward * -1;
+				random = 1f;
+			}
             MoveTo();
             RaycastHit hit;
-            if (Physics.SphereCast(transform.position, 5f, transform.forward, out hit, 5f))
+			if (Physics.SphereCast(transform.position, 5f, RandomSide, out hit, 5f))
             // С помощью СферКаста ищем ближайший тег енеми, либо портала.
             // Берем выбранный обьект в таргет.
             {
@@ -131,7 +160,7 @@ public class MoveMinion : MonoBehaviour {
         {
             transform.Translate(Direction * speed, Space.World);
         }
-        else
+		else if (NonTarget == true)
         {
             GameCharacter.GetComponent<Animation>().CrossFade("idle");
 
@@ -144,9 +173,10 @@ public class MoveMinion : MonoBehaviour {
     {
         GameCharacter.GetComponent<Animation>().CrossFade("die");
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(3f);
 
-        Destroy(this.gameObject);
+
+        Destroy(GameCharacter.gameObject);
 
     }
 }

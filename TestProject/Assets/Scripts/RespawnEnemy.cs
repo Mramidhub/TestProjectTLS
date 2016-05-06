@@ -11,7 +11,7 @@ public class RespawnEnemy : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        RespawnTimeGoblin = 3f;
+        RespawnTimeGoblin = 4f;
     }
 	
 	// Update is called once per frame
@@ -23,7 +23,7 @@ public class RespawnEnemy : MonoBehaviour {
         {
 
             GameObject Goblin = Instantiate(GreenGoblin, transform.position + RandomRespawnPosition, Quaternion.identity) as GameObject;
-            RespawnTimeGoblin = 3f;
+            RespawnTimeGoblin = 4f;
         }
         // Таймер респавна зеленых гоблинов.
 

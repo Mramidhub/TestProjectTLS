@@ -11,7 +11,7 @@ public class RespawnMinion : MonoBehaviour {
     // Use this for initialization
     void Start () {
 
-        RespawnTimeWarrior = 1.5f;
+        RespawnTimeWarrior = 2.5f;
 
 	}
 	
@@ -25,7 +25,7 @@ public class RespawnMinion : MonoBehaviour {
         {
 
             GameObject Goblin = Instantiate(Warrior, RandomRespawnPosition, Quaternion.identity) as GameObject;
-            RespawnTimeWarrior = 1.5f;
+            RespawnTimeWarrior = 2.5f;
         }
 
     }

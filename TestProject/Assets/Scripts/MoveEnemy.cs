@@ -5,9 +5,9 @@ public class MoveEnemy : MonoBehaviour {
 
     public Transform GameCharacter;
     public float speed;
-    public float Health;
+    public float Health = 200;
     public float PAttack;
-	float SphereCastTimer = 1.5f;
+	float SphereCastTimer = 0.5f;
 
     Vector3 EndPoint;
 
@@ -37,14 +37,21 @@ public class MoveEnemy : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        NonTargetMove();
+		NonTargetMove();
         MoveToTarget();
         Dead();
     }
 
+	void FixedUpdate()
+	{
+
+
+
+	}
+
     void Dead()
     {
-        if (Health < 0)
+        if (Health < 0.3f)
         {
             Live = false;
             IDead = true;
@@ -69,16 +76,18 @@ public class MoveEnemy : MonoBehaviour {
 
     void AttackTarget()
     {
-        if (Vector3.Distance(Target.GetComponent<Transform>().position, transform.position) < 4f)
-        {
-            GameCharacter.GetComponent<Animation>().CrossFade("attack01");
-            Target.GetComponent<MoveMinion>().Health -= PAttack * Time.deltaTime;
-            if (Target.GetComponent<MoveMinion>().IDead == true)
-            {
-                NonTarget = true;
-            }
+		if (Vector3.Distance (Target.GetComponent<Transform> ().position, transform.position) < 1.5f) {
+			GameCharacter.GetComponent<Animation> ().CrossFade ("attack01");
+			Target.GetComponent<MoveMinion> ().Health -= PAttack * Time.deltaTime;
+			if (Target.GetComponent<MoveMinion> ().Health < 0) {
+				NonTarget = true;
+			}
 
-        }
+		}
+		else
+		{
+			NonTarget = false;
+		}
     }
 
 
@@ -86,13 +95,26 @@ public class MoveEnemy : MonoBehaviour {
         // Движение Enemy без цели
     {
 		if (NonTarget == true) {
+			float random = 1f;
+			Vector3 RandomSide;
+			random -= Time.deltaTime;
+
+			if (random < 0.5) {
+				RandomSide = transform.forward;
+				random = 1f;
+			}
+			else
+			{
+				RandomSide = transform.forward * -1;
+				random = 1f;
+			}
 			MoveTo ();
 			SphereCastTimer -= Time.deltaTime;
 
 			if (SphereCastTimer < 0) 
 			{
 				RaycastHit hit;
-				if (Physics.SphereCast (transform.position, 5f, transform.forward, out hit, 5f))
+				if (Physics.SphereCast (transform.position, 5f, RandomSide, out hit, 5f))
             // С помощью СферКаста ищем ближайший тег миньона, либо игрока, либо ворот
 					// берем выбранный обьект в таргет
 				{     
@@ -104,7 +126,7 @@ public class MoveEnemy : MonoBehaviour {
 					} 
 					else
 					{
-						SphereCastTimer = 2f;
+						SphereCastTimer = 0.5f;
 
 					}
 				}
@@ -127,7 +149,7 @@ public class MoveEnemy : MonoBehaviour {
         {
             transform.Translate(Direction * speed, Space.World);
         }
-        else
+		else if(NonTarget == true)
         {
             GameCharacter.GetComponent<Animation>().CrossFade("stand");
 
@@ -140,9 +162,9 @@ public class MoveEnemy : MonoBehaviour {
     {
         GameCharacter.GetComponent<Animation>().CrossFade("dead");
         
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(3f);
 
-        Destroy(this.gameObject);
+        Destroy(GameCharacter.gameObject);
 
     }
 }
