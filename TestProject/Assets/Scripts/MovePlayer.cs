@@ -4,14 +4,21 @@ using System.Collections;
 
 public class MovePlayer : MonoBehaviour {
 
-    public Transform GameCharacter;
-    public float speed;
-    Vector3 EndPosition;
-    bool moving;
-    public bool MinionTargetOn;
+    public float PAttack = 100f;
+    public float speed = 0.2f;
+    public float Health = 200f;
 
-	// Use this for initialization
-	void Start () {
+
+    public Transform GameCharacter;
+    Vector3 EndPosition;
+    bool Moving;
+    bool Attaking;
+    public bool MinionTargetOn;
+    GameObject Target;
+
+
+    // Use this for initialization
+    void Start () {
 
         MinionTargetOn = false;
 	
@@ -20,39 +27,100 @@ public class MovePlayer : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-
-        if (Input.GetMouseButtonDown(1) && MinionTargetOn == false)
+        if (MinionTargetOn == false)
         {
-            moving = true;
+            MoveTo();
+        }
+        MoveToTarget();
+        if (Input.GetMouseButtonDown(1))
+        {
+            Moving = true;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit EndPoint;
+            RaycastHit Hit;
 
-            if (Physics.Raycast(ray, out EndPoint, Mathf.Infinity))
+            if (Physics.Raycast(ray, out Hit, Mathf.Infinity))
             {
-                EndPosition = EndPoint.point; 
-                
+                if (Hit.transform.tag != "Enemy")
+                {
+                    Debug.Log("1");
+                    EndPosition = Hit.point;
+                   
+                }
+                else if (Hit.transform.tag == "Enemy")
+                {
+                    Target = Hit.transform.gameObject;
+                    MinionTargetOn = true;
+                    Debug.Log(Target.ToString());
+                }
+
             }
+
 
         }
 
-        if (moving)
+        
+     }
+
+    void MoveToTarget()
+    // Движение к target.
+    {
+        if (MinionTargetOn == true)
         {
-            Vector3 Direction = EndPosition - transform.position;
+            EndPosition = Target.GetComponent<Transform>().position;
+            MoveTo();
+            AttackTarget();
+
+        }
+    }
+
+    void MoveTo()
+    {
+
+        if (Moving && !Attaking)
+        {
+            Debug.Log("3");
+            Vector3 Direction =  EndPosition- transform.position;
+            Direction = new Vector3(Direction.x, 0, Direction.z);
             Direction.Normalize();
             transform.LookAt(EndPosition);
-			GameCharacter.GetComponent<Animation>().CrossFade("Run");
+            GameCharacter.GetComponent<Animation>().CrossFade("Run");
             float TargetPosition = Vector3.Distance(transform.position, EndPosition);
-            if (TargetPosition > 0.3f)
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Direction), speed * Time.deltaTime);
+            transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
+
+            if (TargetPosition > 1.2f)
             {
-				
-				transform.Translate(Direction * speed,  Space.World);
+                transform.Translate(Direction * speed, Space.World);
+                Debug.Log("4");
+            }
+            else if (MinionTargetOn ==false)
+            {
+                Moving = false;
+                GameCharacter.GetComponent<Animation>().CrossFade("idle");
+                Debug.Log("5");
+            }
+
+        }
+    }
+
+    void AttackTarget()
+    {
+        if (Vector3.Distance(Target.GetComponent<Transform>().position, transform.position) < 1.5f)
+        {
+            Attaking = true;
+            Debug.Log("Attack!");
+            GameCharacter.GetComponent<Animation>().CrossFade("Attack");
+            Target.GetComponent<MoveEnemy>().Health -= PAttack * Time.deltaTime;
+            if (Target.GetComponent<MoveEnemy>().Health > 0)
+            {
+                MinionTargetOn = true;
             }
             else
             {
-                moving = false;
-                GameCharacter.GetComponent<Animation>().CrossFade("idle");
+                MinionTargetOn = false;
             }
         }
-     }
-        
+
+    }
+
 }

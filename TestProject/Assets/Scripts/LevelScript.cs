@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class LevelScript : MonoBehaviour {
 
     public static bool OnTargetNPC;
+    public static int UnitIndex;
     public GameObject Player;
     public GameObject Target;
     Vector3 TargetPosition;
@@ -28,14 +29,12 @@ public class LevelScript : MonoBehaviour {
     void Start() {
         Unit = new List<GameObject>();
         UnitSelected = new List<GameObject>();
-
+        UnitIndex = 0;
         OnTargetNPC = true;
     }
 
     void Update()
     {
-        //Debug.Log(OnTargetNPC);
-        StartCoroutine(OfTargets());
         SingleTarget();
 
     }
@@ -52,18 +51,13 @@ public class LevelScript : MonoBehaviour {
             {
                 if (hit.transform.tag == "Minion" || hit.transform.tag == "Player")
                 {
-                    TargetMark(hit.transform);
-                    //Если нажали на NPC или здание создаем таргет - метку.
-
-                    Player.GetComponent<MovePlayer>().MinionTargetOn = true;
-                    // Если нажали на NPC или здание управлевние мышкой снимаеться с игрока.
+                    Select();
                 }
                 else if (hit.transform.tag == "Terrain")
                 {
-                    Player.GetComponent<MovePlayer>().MinionTargetOn = false;
-                    OnTargetNPC = false;
-                    // Если  попали в Terrain, то передаем NPC глобальную переменную, для уничтожение таргет - меток 
-                    // И возвращаем управление героя мышкой.
+                    Deselect();
+                   // Если  попали в Terrain, то передаем NPC глобальную переменную, для уничтожение таргет - меток 
+                   // И возвращаем управление героя мышкой.
                 }
             }
         }
@@ -74,11 +68,12 @@ public class LevelScript : MonoBehaviour {
 
     void TargetMark(Transform Targ)
     {
-        TargetPosition = new Vector3(Targ.transform.position.x, 0.1f, Targ.transform.position.z);
-        GameObject ChosenTarget = new GameObject();
-        ChosenTarget = Instantiate(Target, TargetPosition, Quaternion.identity) as GameObject;
-        ChosenTarget.transform.parent = Targ.transform;
-        ChosenTarget.transform.Rotate(90f, 0f, 0f);
+    TargetPosition = new Vector3(Targ.transform.position.x, 0.1f, Targ.transform.position.z);
+    GameObject ChosenTarget = new GameObject();
+    ChosenTarget = Instantiate(Target, TargetPosition, Quaternion.identity) as GameObject;
+    ChosenTarget.transform.parent = Targ.transform;
+    ChosenTarget.transform.Rotate(90f, 0f, 0f);
+
 
     }
     // Установка таргет-метки на NPC через добавление дочернего обьекта.
@@ -100,10 +95,9 @@ public class LevelScript : MonoBehaviour {
         {
             for (int j = 0; j < UnitSelected.Count; j++)
             {
-                TargetMark(UnitSelected[j].transform);
-                Player.GetComponent<MovePlayer>().MinionTargetOn = true;
 
-                // Добавляем таргет-метку.
+                UnitSelected[j].transform.Find("TargetMark").GetComponent<Renderer>().enabled = true;
+                Player.GetComponent<MovePlayer>().MinionTargetOn = true;
             }
 
         } 
@@ -117,9 +111,8 @@ public class LevelScript : MonoBehaviour {
         {
             for (int j = 0; j < UnitSelected.Count; j++)
             {
-                
-               // UnitSelected[j].GetComponent<MoveMinion>().DestroyOnTarget();
-                // Уничтожаем таргет метку
+                UnitSelected[j].transform.Find("TargetMark").GetComponent<Renderer>().enabled = false;
+                Player.GetComponent<MovePlayer>().MinionTargetOn = false;
             }
 
         }
@@ -134,6 +127,7 @@ public class LevelScript : MonoBehaviour {
 
         if (Input.GetMouseButtonDown(0))
         {
+            OnTargetNPC = false;
             Deselect();
             StartPosition = Input.mousePosition;
             Draw = true;
@@ -165,34 +159,23 @@ public class LevelScript : MonoBehaviour {
 
             for (int j = 0; j < Unit.Count; j++)
             {
-                Vector2 Tmp = new Vector2(Camera.main.WorldToScreenPoint(Unit[j].transform.position).x, Screen.height - Camera.main.WorldToScreenPoint(Unit[j].transform.position).y);
-                // Трансформируем позицию объекта из мирового пространства, в пространство экрана.
-                if (Rect.Contains(Tmp))
-                {
-                    if (UnitSelected.Count == 0)
+                    Vector2 Tmp = new Vector2(Camera.main.WorldToScreenPoint(Unit[j].transform.position).x, Screen.height - Camera.main.WorldToScreenPoint(Unit[j].transform.position).y);
+                    // Трансформируем позицию объекта из мирового пространства, в пространство экрана.
+                    if (Rect.Contains(Tmp))
                     {
-                        UnitSelected.Add(Unit[j]);
-                    }
-                    else if (!ChekUnit(Unit[j]))
-                    {
-                        UnitSelected.Add(Unit[j]);
-                    }
+                        if (UnitSelected.Count == 0)
+                        {
+                            UnitSelected.Add(Unit[j]);
+                        }
+                        else if (!ChekUnit(Unit[j]))
+                        {
+                            UnitSelected.Add(Unit[j]);
+                        }
 
-                }
+                    }
             }
         }
     }
     // Рисуем рамку, добавляем обьекты в коллецию.
 
-    IEnumerator OfTargets()
-    {
-        if (OnTargetNPC == false)
-        {
-            yield return new WaitForSeconds(1f);
-
-            OnTargetNPC = true;
-        }
-
-    }
-    // Возвращаем глоабльной переменной OnTargetNPC значение True.
 }

@@ -21,10 +21,6 @@ public class MoveEnemy : MonoBehaviour {
 
     GameObject Target;
 
-
-
-
-
 	// Use this for initialization
 	void Start () {
         Die = false;
@@ -93,10 +89,12 @@ public class MoveEnemy : MonoBehaviour {
 
     void AttackTarget()
     {
-		if (Vector3.Distance (Target.GetComponent<Transform> ().position, transform.position) < 1.5f) {
+		if (Vector3.Distance (Target.GetComponent<Transform> ().position, transform.position) < 1.5f)
+        {
 			GameCharacter.GetComponent<Animation> ().CrossFade ("attack01");
 			Target.GetComponent<MoveMinion> ().Health -= PAttack * Time.deltaTime;
-			if (Target.GetComponent<MoveMinion> ().Health < 0) {
+			if (Target.GetComponent<MoveMinion> ().Health < 0)
+            {
 				NonTarget = true;
                 EndPoint = PointDestination;
             }
@@ -107,8 +105,6 @@ public class MoveEnemy : MonoBehaviour {
 			NonTarget = false;
 		}
     }
-
-
 
     void MoveTo()
         // Движение к заданной точке

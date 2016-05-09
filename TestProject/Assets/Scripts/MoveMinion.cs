@@ -16,14 +16,19 @@ public class MoveMinion : MonoBehaviour {
     bool NonTarget;
     bool Die;
 
+    Vector3 TempNameObject;
 
     float MoveToRandomPortal;
+    public GameObject TargetMark;
 
     GameObject Target;
     // Use this for initialization
     void Start () {
 
+        TempNameObject = transform.position;
+        gameObject.name = TempNameObject.ToString();
         LevelScript.Unit.Add(gameObject);
+
         // Добавляем gameObject в коллекицю unit в LevelScript. Для того, что бы его омжно было исопльзовать в выделении рамкой.
         Die = false;
         Moving = false;
@@ -47,8 +52,6 @@ public class MoveMinion : MonoBehaviour {
             MoveTo();
         }
         Dead();
-        DestroyOnTarget();
-
     }
 
 	void FixedUpdate()
@@ -111,6 +114,7 @@ public class MoveMinion : MonoBehaviour {
 
     void AttackTarget()
     {
+
         if (Vector3.Distance(Target.GetComponent<Transform>().position, transform.position) < 1.5f)
         {
             GameCharacter.GetComponent<Animation>().CrossFade("attack");
@@ -132,6 +136,7 @@ public class MoveMinion : MonoBehaviour {
     // Движение к заданной точке.
     {
         Vector3 Direction = EndPoint - transform.position;
+        Direction = new Vector3(Direction.x, 0, Direction.z);
         Direction.Normalize();
         transform.LookAt(EndPoint);
         GameCharacter.GetComponent<Animation>().CrossFade("run");
@@ -140,6 +145,7 @@ public class MoveMinion : MonoBehaviour {
         if (TargetPosition > 1.5f)
         {
             transform.Translate(Direction * speed, Space.World);
+
         }
 		else if (NonTarget == true)
         {
@@ -150,28 +156,24 @@ public class MoveMinion : MonoBehaviour {
 
     }
 
-    public void DestroyOnTarget()
-    {
-        if (LevelScript.OnTargetNPC == false )
-        {
-            if (transform.Find("Target(Clone)").gameObject)
-            {
-              //  Destroy(transform.Find("Target(Clone)").gameObject);
-            }
-            
-        }
-    }
-    // Если попали в пустоту, уничтожаем дочерний обьект таргет-метки, если он есть.
-
     IEnumerator DeadTime()
     {
         Die = true;
+
 
         GameCharacter.GetComponent<Animation>().CrossFade("die");
 
         yield return new WaitForSeconds(2f);
 
-        Destroy(GameCharacter.gameObject);
+        string tempname = gameObject.name;
 
+        int x = LevelScript.Unit.Count;
+
+        int index = LevelScript.Unit.FindIndex(obj => obj.name == tempname);
+
+        LevelScript.Unit.RemoveAt(index);
+
+        Destroy(transform.gameObject);
     }
+    // Ждем пару сек ипрежде чем убить обьект находим его индекс в коллецкии Unit и удалем элемент.
 }

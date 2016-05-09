@@ -24,7 +24,7 @@ public class RespawnMinion : MonoBehaviour {
         if (RespawnTimeWarrior < 0f)
         {
 
-            GameObject Goblin = Instantiate(Warrior, RandomRespawnPosition, Quaternion.identity) as GameObject;
+            GameObject warrior = Instantiate(Warrior, RandomRespawnPosition, Quaternion.identity) as GameObject;
             RespawnTimeWarrior = 2.5f;
         }
 
