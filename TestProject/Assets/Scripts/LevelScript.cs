@@ -56,8 +56,7 @@ public class LevelScript : MonoBehaviour {
                 else if (hit.transform.tag == "Terrain")
                 {
                     Deselect();
-                   // Если  попали в Terrain, то передаем NPC глобальную переменную, для уничтожение таргет - меток 
-                   // И возвращаем управление героя мышкой.
+                   // Если попали в Terrain возвращаем управление героя мышкой.
                 }
             }
         }
@@ -98,6 +97,7 @@ public class LevelScript : MonoBehaviour {
 
                 UnitSelected[j].transform.Find("TargetMark").GetComponent<Renderer>().enabled = true;
                 Player.GetComponent<MovePlayer>().MinionTargetOn = true;
+                Player.GetComponent<MovePlayer>().ControlNPC = true;
             }
 
         } 
@@ -113,6 +113,7 @@ public class LevelScript : MonoBehaviour {
             {
                 UnitSelected[j].transform.Find("TargetMark").GetComponent<Renderer>().enabled = false;
                 Player.GetComponent<MovePlayer>().MinionTargetOn = false;
+                Player.GetComponent<MovePlayer>().ControlNPC = false;
             }
 
         }

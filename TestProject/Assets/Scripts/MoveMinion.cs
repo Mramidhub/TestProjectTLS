@@ -7,14 +7,15 @@ public class MoveMinion : MonoBehaviour {
     public float speed;
     public float Health = 200;
     public float PAttack;
+    // Показатели персонажа.
 
     Vector3 EndPoint;
     Vector3 PointDestination;
 
     bool Moving;
-    bool AttackOn;
     bool NonTarget;
     bool Die;
+    bool AutoMove;
 
     Vector3 TempNameObject;
 
@@ -33,6 +34,7 @@ public class MoveMinion : MonoBehaviour {
         Die = false;
         Moving = false;
         NonTarget = true;
+        AutoMove = true;
         RandomEndPoint();
 
     }
@@ -40,6 +42,8 @@ public class MoveMinion : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+        ControlTarget();
+        Dead();
 
         if (Die == false)
         {
@@ -51,10 +55,45 @@ public class MoveMinion : MonoBehaviour {
         {
             MoveTo();
         }
-        Dead();
+        
     }
 
-	void FixedUpdate()
+    void ControlTarget()
+    {
+        if (TargetMark.GetComponent<Renderer>().enabled == true)
+        {
+            AutoMove = false;
+
+            if (Input.GetMouseButtonDown(1))
+            {
+                NonTarget = true;
+                Debug.Log("5");
+                RaycastHit Hitt;
+                Ray ray1 = Camera.main.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(ray1, out Hitt, Mathf.Infinity))
+                {
+                    if (Hitt.transform.tag != "Enemy")
+                    {
+                        Debug.Log("6");
+                        EndPoint = Hitt.point;
+                    }
+                    else if (Hitt.transform.tag == "Enemy")
+                    {
+                        Debug.Log("3");
+                        NonTarget = false;
+                        Target = Hitt.transform.gameObject;
+                        Debug.Log(Target.ToString());
+                    }
+
+
+                }
+
+            }   
+        }
+
+    }
+
+    void FixedUpdate()
 	{
 
 
@@ -62,12 +101,14 @@ public class MoveMinion : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.transform.tag == "Enemy")
+        if (AutoMove == true)
         {
-            Target = other.gameObject;
-            NonTarget = false;
+            if (other.transform.tag == "Enemy")
+            {
+                Target = other.gameObject;
+                NonTarget = false;
+            }
         }
-
     }
     // Если кто то входит в коллайдер миньон берет его в target.
 
@@ -114,19 +155,21 @@ public class MoveMinion : MonoBehaviour {
 
     void AttackTarget()
     {
-
+       // Debug.Log("Attack!!!");
         if (Vector3.Distance(Target.GetComponent<Transform>().position, transform.position) < 1.5f)
         {
             GameCharacter.GetComponent<Animation>().CrossFade("attack");
             Target.GetComponent<MoveEnemy>().Health -= PAttack*Time.deltaTime;
 			if (Target.GetComponent<MoveEnemy>().Health < 0)
             {
+                Debug.Log("1");
                 NonTarget = true;
                 EndPoint = PointDestination;
             }
 			else
 			{
-				NonTarget = false;
+               // Debug.Log("2");
+                NonTarget = false;
 			}
         }
     }

@@ -7,7 +7,9 @@ public class MoveEnemy : MonoBehaviour {
     public float speed;
     public float Health = 200;
     public float PAttack;
-	float SphereCastTimer = 0.5f;
+    // Показатели персонажа.
+
+    float SphereCastTimer = 0.5f;
 
     Vector3 EndPoint;
     Vector3 PointDestination;
@@ -20,6 +22,7 @@ public class MoveEnemy : MonoBehaviour {
     bool Die;
 
     GameObject Target;
+    public GameObject TargetMark;
 
 	// Use this for initialization
 	void Start () {
@@ -31,7 +34,7 @@ public class MoveEnemy : MonoBehaviour {
 
 
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 

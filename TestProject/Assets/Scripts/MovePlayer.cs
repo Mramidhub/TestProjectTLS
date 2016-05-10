@@ -7,6 +7,7 @@ public class MovePlayer : MonoBehaviour {
     public float PAttack = 100f;
     public float speed = 0.2f;
     public float Health = 200f;
+    // Показатели персонажа.
 
 
     public Transform GameCharacter;
@@ -14,6 +15,7 @@ public class MovePlayer : MonoBehaviour {
     bool Moving;
     bool Attaking;
     public bool MinionTargetOn;
+    public bool ControlNPC;
     GameObject Target;
 
 
@@ -31,7 +33,10 @@ public class MovePlayer : MonoBehaviour {
         {
             MoveTo();
         }
-        MoveToTarget();
+        if (MinionTargetOn == true)
+        {
+            MoveToTarget();
+        }
         if (Input.GetMouseButtonDown(1))
         {
             Moving = true;
@@ -40,13 +45,12 @@ public class MovePlayer : MonoBehaviour {
 
             if (Physics.Raycast(ray, out Hit, Mathf.Infinity))
             {
-                if (Hit.transform.tag != "Enemy")
+                if (Hit.transform.tag != "Enemy" && Hit.transform.tag != "Construction")
                 {
-                    Debug.Log("1");
                     EndPosition = Hit.point;
                    
                 }
-                else if (Hit.transform.tag == "Enemy")
+                else if (Hit.transform.tag == "Enemy" && Hit.transform.tag != "Construction")
                 {
                     Target = Hit.transform.gameObject;
                     MinionTargetOn = true;
@@ -64,7 +68,7 @@ public class MovePlayer : MonoBehaviour {
     void MoveToTarget()
     // Движение к target.
     {
-        if (MinionTargetOn == true)
+        if (MinionTargetOn == true && ControlNPC == false)
         {
             EndPosition = Target.GetComponent<Transform>().position;
             MoveTo();
@@ -78,7 +82,6 @@ public class MovePlayer : MonoBehaviour {
 
         if (Moving && !Attaking)
         {
-            Debug.Log("3");
             Vector3 Direction =  EndPosition- transform.position;
             Direction = new Vector3(Direction.x, 0, Direction.z);
             Direction.Normalize();
@@ -91,17 +94,16 @@ public class MovePlayer : MonoBehaviour {
             if (TargetPosition > 1.2f)
             {
                 transform.Translate(Direction * speed, Space.World);
-                Debug.Log("4");
             }
             else if (MinionTargetOn ==false)
             {
                 Moving = false;
                 GameCharacter.GetComponent<Animation>().CrossFade("idle");
-                Debug.Log("5");
             }
 
         }
     }
+    // Движение к...
 
     void AttackTarget()
     {
@@ -111,16 +113,20 @@ public class MovePlayer : MonoBehaviour {
             Debug.Log("Attack!");
             GameCharacter.GetComponent<Animation>().CrossFade("Attack");
             Target.GetComponent<MoveEnemy>().Health -= PAttack * Time.deltaTime;
-            if (Target.GetComponent<MoveEnemy>().Health > 0)
+            if (Target.GetComponent<MoveEnemy>().Health >= 0)
             {
                 MinionTargetOn = true;
+                Debug.Log("222");
             }
             else
             {
+                Attaking = false;
                 MinionTargetOn = false;
+                Debug.Log("333");
             }
         }
 
     }
+    // Бьем таргет.
 
 }
