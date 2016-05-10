@@ -96,8 +96,7 @@ public class LevelScript : MonoBehaviour {
             {
 
                 UnitSelected[j].transform.Find("TargetMark").GetComponent<Renderer>().enabled = true;
-                Player.GetComponent<MovePlayer>().MinionTargetOn = true;
-                Player.GetComponent<MovePlayer>().ControlNPC = true;
+
             }
 
         } 
@@ -112,8 +111,7 @@ public class LevelScript : MonoBehaviour {
             for (int j = 0; j < UnitSelected.Count; j++)
             {
                 UnitSelected[j].transform.Find("TargetMark").GetComponent<Renderer>().enabled = false;
-                Player.GetComponent<MovePlayer>().MinionTargetOn = false;
-                Player.GetComponent<MovePlayer>().ControlNPC = false;
+				Debug.Log ("1111");
             }
 
         }

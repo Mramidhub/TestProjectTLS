@@ -5,8 +5,13 @@ public class MoveEnemy : MonoBehaviour {
 
     public Transform GameCharacter;
     public float speed;
+	public float AttackSpeed;
     public float Health = 200;
     public float PAttack;
+	public float AttackRange;
+	public float Armor;
+	public int Gold;
+	public int Exp;
     // Показатели персонажа.
 
     float SphereCastTimer = 0.5f;
@@ -29,7 +34,7 @@ public class MoveEnemy : MonoBehaviour {
         Die = false;
         Moving = false;
         NonTarget = true;
-        EndPoint = new Vector3(46f, 0, 34f);
+        EndPoint = new Vector3(49f, 0, 58f);
         PointDestination = EndPoint;
 
 
@@ -49,16 +54,9 @@ public class MoveEnemy : MonoBehaviour {
         Dead();
     }
 
-	void FixedUpdate()
-	{
-
-
-
-	}
-
     void OnTriggerEnter(Collider other)
     {
-        if (other.transform.tag == "Minion")
+		if (other.transform.tag == "Minion" || other.transform.tag == "DevelopersSofa" || other.transform.tag == "Player")
         {
             Target = other.gameObject;
             NonTarget = false;
@@ -77,6 +75,7 @@ public class MoveEnemy : MonoBehaviour {
         }
 
     }
+	// Смерть.
 
     void MoveToTarget()
         // Движение к target.
@@ -89,6 +88,7 @@ public class MoveEnemy : MonoBehaviour {
 
         }
     }
+	// Движение к Target.
 
     void AttackTarget()
     {
@@ -108,6 +108,7 @@ public class MoveEnemy : MonoBehaviour {
 			NonTarget = false;
 		}
     }
+	// Атака Target.
 
     void MoveTo()
         // Движение к заданной точке

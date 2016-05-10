@@ -4,14 +4,20 @@ using System.Collections;
 
 public class MovePlayer : MonoBehaviour {
 
-    public float PAttack = 100f;
+	public float PAttack = 100f;
     public float speed = 0.2f;
     public float Health = 200f;
+	public float AtkSpeed = 400f;
+	public float Armor = 100f;
+	public int Gold = 0;
+	public int Exp = 0;
+	public int Lvl = 0;
     // Показатели персонажа.
 
 
     public Transform GameCharacter;
     Vector3 EndPosition;
+	bool AddToUnit;
     bool Moving;
     bool Attaking;
     public bool MinionTargetOn;
@@ -20,49 +26,48 @@ public class MovePlayer : MonoBehaviour {
 
 
     // Use this for initialization
-    void Start () {
-
+    void Start () 
+	{
         MinionTargetOn = false;
-	
 	}
-	
+
 	// Update is called once per frame
 	void Update ()
     {
-        if (MinionTargetOn == false)
-        {
-            MoveTo();
-        }
-        if (MinionTargetOn == true)
-        {
-            MoveToTarget();
-        }
-        if (Input.GetMouseButtonDown(1))
-        {
-            Moving = true;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit Hit;
+		if (AddToUnit == false) 
+		{
+			LevelScript.Unit.Add(gameObject);
+			AddToUnit = true;
+		}
+		if (transform.Find ("TargetMark").GetComponent<Renderer> ().enabled == true) 
+		{
+			if (MinionTargetOn == false) {
+				MoveTo ();
+			}
+			if (MinionTargetOn == true) {
+				MoveToTarget ();
+			}
+			if (Input.GetMouseButtonDown (1)) {
+				Moving = true;
+				Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+				RaycastHit Hit;
 
-            if (Physics.Raycast(ray, out Hit, Mathf.Infinity))
-            {
-                if (Hit.transform.tag != "Enemy" && Hit.transform.tag != "Construction")
-                {
-                    EndPosition = Hit.point;
+				if (Physics.Raycast (ray, out Hit, Mathf.Infinity)) {
+					if (Hit.transform.tag != "Enemy" && Hit.transform.tag != "Construction") {
+						EndPosition = Hit.point;
                    
-                }
-                else if (Hit.transform.tag == "Enemy" && Hit.transform.tag != "Construction")
-                {
-                    Target = Hit.transform.gameObject;
-                    MinionTargetOn = true;
-                    Debug.Log(Target.ToString());
-                }
+					} else if (Hit.transform.tag == "Enemy" && Hit.transform.tag != "Construction") {
+						Target = Hit.transform.gameObject;
+						MinionTargetOn = true;
+						Debug.Log (Target.ToString ());
+					}
 
-            }
+				}
 
 
-        }
+			}
 
-        
+		}
      }
 
     void MoveToTarget()
@@ -127,6 +132,8 @@ public class MovePlayer : MonoBehaviour {
         }
 
     }
+
+
     // Бьем таргет.
 
 }

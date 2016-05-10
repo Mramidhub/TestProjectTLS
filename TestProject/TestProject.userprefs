@@ -1,12 +1,13 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\MoveMinion.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\LevelScript.cs">
     <Files>
-      <File FileName="Assets\Scripts\Move.cs" Line="45" Column="42" />
-      <File FileName="Assets\Scripts\MoveEnemy.cs" Line="79" Column="94" />
-      <File FileName="Assets\Scripts\MoveMinion.cs" Line="159" Column="33" />
-      <File FileName="Assets\Scripts\RespawnEnemy.cs" Line="14" Column="30" />
-      <File FileName="Assets\Scripts\RespawnMinion.cs" Line="14" Column="33" />
+      <File FileName="Assets\Scripts\MovePlayer.cs" Line="30" Column="3" />
+      <File FileName="Assets\Scripts\LevelScript.cs" Line="99" Column="1" />
+      <File FileName="Assets\Scripts\MoveMinion.cs" Line="36" Column="9" />
+      <File FileName="Assets\Scripts\GUIPlayer.cs" Line="35" Column="65" />
+      <File FileName="Assets\Scripts\Sofa.cs" Line="17" Column="1" />
+      <File FileName="Assets\Scripts\MoveEnemy.cs" Line="102" Column="38" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

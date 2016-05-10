@@ -5,8 +5,13 @@ public class MoveMinion : MonoBehaviour {
 
     public Transform GameCharacter;
     public float speed;
+	public float AttackSpeed;
     public float Health = 200;
     public float PAttack;
+	public float AttackRange;
+	public float Armor;
+	public int Gold;
+	public int Exp;
     // Показатели персонажа.
 
     Vector3 EndPoint;
