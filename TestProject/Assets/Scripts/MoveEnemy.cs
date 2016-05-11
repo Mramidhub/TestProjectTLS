@@ -6,7 +6,7 @@ public class MoveEnemy : MonoBehaviour {
     public Transform GameCharacter;
     public float speed;
 	public float AttackSpeed;
-    public float Health = 200;
+    public float Health;
     public float PAttack;
 	public float AttackRange;
 	public float Armor;
@@ -23,24 +23,22 @@ public class MoveEnemy : MonoBehaviour {
     bool AttackOn;
     bool NonTarget;
     bool Ontarget;
-    // Если NPC взят в таргет игроком
     bool Die;
 
     GameObject Target;
     public GameObject TargetMark;
 
-	// Use this for initialization
-	void Start () {
+
+	void Start ()
+    {
         Die = false;
         Moving = false;
         NonTarget = true;
         EndPoint = new Vector3(49f, 0, 58f);
         PointDestination = EndPoint;
-
-
 	}
 
-	// Update is called once per frame
+
 	void Update () {
 
         if (Die == false)
@@ -63,6 +61,7 @@ public class MoveEnemy : MonoBehaviour {
         }
 
     }
+    // Если кто-то зашел в коллайдет с тригером моб берет его в Target.
 
     void Dead()
     {
@@ -78,9 +77,8 @@ public class MoveEnemy : MonoBehaviour {
 	// Смерть.
 
     void MoveToTarget()
-        // Движение к target.
     {
-        if (NonTarget == false)
+        if (NonTarget == false && LevelScript.EndGameLoose == false)
         {
             EndPoint = Target.GetComponent<Transform>().position;
             MoveTo();
@@ -92,14 +90,28 @@ public class MoveEnemy : MonoBehaviour {
 
     void AttackTarget()
     {
-		if (Vector3.Distance (Target.GetComponent<Transform> ().position, transform.position) < 1.5f)
+        if (Vector3.Distance(Target.GetComponent<Transform>().position, transform.position) < 1.5f)
         {
-			GameCharacter.GetComponent<Animation> ().CrossFade ("attack01");
-			Target.GetComponent<MoveMinion> ().Health -= PAttack * Time.deltaTime;
-			if (Target.GetComponent<MoveMinion> ().Health < 0)
+            GameCharacter.GetComponent<Animation>().CrossFade("attack01");
+            if (Target.tag == "Minion" ||  Target.tag == "Player")
             {
-				NonTarget = true;
+                Target.GetComponent<MoveMinion>().Health -= PAttack * Time.deltaTime;
+            }
+            else if (Target.tag == "DevelopersSofa")
+            {
+                Target.GetComponent<Sofa>().Health -= PAttack * Time.deltaTime;
+            }
+            
+            if (Target.tag == "Minion" || Target.tag == "Player" && Target.GetComponent<MoveMinion>().Health <= 0)
+            {
+                NonTarget = true;
                 EndPoint = PointDestination;
+            }
+            if (Target.tag == "DevelopersSofa" && Target.GetComponent<Sofa>().Health <= 0)
+            {
+                NonTarget = true;
+                EndPoint = PointDestination;
+       
             }
 
 		}
@@ -111,7 +123,6 @@ public class MoveEnemy : MonoBehaviour {
 	// Атака Target.
 
     void MoveTo()
-        // Движение к заданной точке
     {
         Vector3 Direction = EndPoint - transform.position;
         Direction.Normalize();
@@ -131,6 +142,7 @@ public class MoveEnemy : MonoBehaviour {
 
 
     }
+    // Движение к заданной точке.
 
     IEnumerator DeadTime()
     {
@@ -142,4 +154,5 @@ public class MoveEnemy : MonoBehaviour {
         Destroy(GameCharacter.gameObject);
 
     }
+    // Моб падает и через несколько секунд GO уничтожаеться.
 }

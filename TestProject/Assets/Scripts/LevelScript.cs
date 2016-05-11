@@ -21,6 +21,8 @@ public class LevelScript : MonoBehaviour {
     public GUISkin Skin;
     Rect Rect;
     bool Draw;
+    bool SingleSelected;
+    public static bool EndGameLoose;
     Vector2 StartPosition;
     Vector2 EndPosition;
     // Переменные для рамки выделения.
@@ -31,12 +33,14 @@ public class LevelScript : MonoBehaviour {
         UnitSelected = new List<GameObject>();
         UnitIndex = 0;
         OnTargetNPC = true;
+        EndGameLoose = false;
+        SingleSelected = false;
     }
 
     void Update()
     {
-        SingleTarget();
 
+        SingleTarget();
     }
 
     void SingleTarget()
@@ -46,17 +50,29 @@ public class LevelScript : MonoBehaviour {
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-
+            Debug.Log("1");
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
+                Debug.Log("2");
                 if (hit.transform.tag == "Minion" || hit.transform.tag == "Player")
                 {
+                    SingleSelected = true;
+                    Debug.Log("3");
+                    UnitSelected.Add(hit.transform.gameObject);
                     Select();
+                    Draw = false;
                 }
                 else if (hit.transform.tag == "Terrain")
                 {
+                    Debug.Log("7");
                     Deselect();
-                   // Если попали в Terrain возвращаем управление героя мышкой.
+                    // Если попали в Terrain отключаем таргет метку.
+
+                }
+                else if (hit.transform.tag == "Barracks")
+                {
+                    hit.transform.GetComponent<RespawnWarrior>().GUIBarracks.enabled = true;
+
                 }
             }
         }
@@ -65,17 +81,7 @@ public class LevelScript : MonoBehaviour {
     }
     // Выбор одиночной цели.
 
-    void TargetMark(Transform Targ)
-    {
-    TargetPosition = new Vector3(Targ.transform.position.x, 0.1f, Targ.transform.position.z);
-    GameObject ChosenTarget = new GameObject();
-    ChosenTarget = Instantiate(Target, TargetPosition, Quaternion.identity) as GameObject;
-    ChosenTarget.transform.parent = Targ.transform;
-    ChosenTarget.transform.Rotate(90f, 0f, 0f);
-
-
-    }
-    // Установка таргет-метки на NPC через добавление дочернего обьекта.
+   
 
     bool ChekUnit(GameObject unit)
     {
@@ -90,13 +96,14 @@ public class LevelScript : MonoBehaviour {
 
     void Select()
     {
+        Debug.Log("4");
         if (UnitSelected.Count > 0)
         {
+            Debug.Log("5");
             for (int j = 0; j < UnitSelected.Count; j++)
             {
-
+                Debug.Log("6");
                 UnitSelected[j].transform.Find("TargetMark").GetComponent<Renderer>().enabled = true;
-
             }
 
         } 
@@ -106,14 +113,16 @@ public class LevelScript : MonoBehaviour {
 
     void Deselect()
     {
+        Debug.Log("9");
         if (UnitSelected.Count > 0)
         {
+            Debug.Log("10");
             for (int j = 0; j < UnitSelected.Count; j++)
             {
                 UnitSelected[j].transform.Find("TargetMark").GetComponent<Renderer>().enabled = false;
-				Debug.Log ("1111");
+                Debug.Log("11");
+                
             }
-
         }
 
     }
@@ -124,7 +133,7 @@ public class LevelScript : MonoBehaviour {
         GUI.skin = Skin;
         GUI.depth = 99;
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && SingleSelected == false)
         {
             OnTargetNPC = false;
             Deselect();
@@ -135,10 +144,15 @@ public class LevelScript : MonoBehaviour {
         if (Input.GetMouseButtonUp(0))
         {
             Draw = false;
-            Select();
+            if (SingleSelected == false)
+            {
+                Select();
+            }
+            // Отключаем единичный выбор при нажатии на terrain. 
             OnTargetNPC = true;
+            SingleSelected = false;
         }
-
+        
         if (Draw)
         {
             UnitSelected.Clear();

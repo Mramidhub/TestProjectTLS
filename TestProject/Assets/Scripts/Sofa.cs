@@ -6,25 +6,25 @@ public class Sofa : MonoBehaviour {
 
 	public float Health;
 
-	// Use this for initialization
-	void Start () {
+
+	void Start ()
+    {
 	
 	}
 	
-	// Update is called once per frame
-	void Update () {
-	
-		Debug.Log (Health.ToString ());
-		Destruction ();
 
+	void Update ()
+    {
+		Destruction ();
 	}
 
 	void Destruction()
 	{
 		if (Health <= 0) 
 		{
-			Debug.Log ("Бо-бо");
 			Destroy (gameObject);
+            LevelScript.EndGameLoose = true;
 		}
 	}
+    // При уничтожении дивана - конец игры.
 }

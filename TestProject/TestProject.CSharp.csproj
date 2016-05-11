@@ -74,12 +74,14 @@
     <Compile Include="Assets\NPC\Minions\AShopExport\ShowAnimation.cs" />
     <Compile Include="Assets\NPC\Minions\AShopExport\UIObjRotation.cs" />
     <Compile Include="Assets\Scripts\CamerController.cs" />
+    <Compile Include="Assets\Scripts\GUIPlayer.cs" />
     <Compile Include="Assets\Scripts\LevelScript.cs" />
     <Compile Include="Assets\Scripts\MoveEnemy.cs" />
     <Compile Include="Assets\Scripts\MoveMinion.cs" />
     <Compile Include="Assets\Scripts\MovePlayer.cs" />
     <Compile Include="Assets\Scripts\RespawnEnemy.cs" />
-    <Compile Include="Assets\Scripts\RespawnMinion.cs" />
+    <Compile Include="Assets\Scripts\RespawnWarrior.cs" />
+    <Compile Include="Assets\Scripts\Sofa.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\NPC\Enemy\Mummy\Materials\myStandart.shader" />
