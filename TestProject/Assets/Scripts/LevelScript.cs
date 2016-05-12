@@ -8,10 +8,11 @@ public class LevelScript : MonoBehaviour {
     public static int UnitIndex;
     public GameObject Player;
     public GameObject Target;
+    GameObject HitGObject;
     Vector3 TargetPosition;
     // Переменные для ситемы таргет-метки.
 
-
+    GameObject SelctedConstr;
 
 
     public static List<GameObject> Unit;
@@ -22,6 +23,8 @@ public class LevelScript : MonoBehaviour {
     Rect Rect;
     bool Draw;
     bool SingleSelected;
+    bool GUIConstrustion;
+    bool ClickGUI;
     public static bool EndGameLoose;
     Vector2 StartPosition;
     Vector2 EndPosition;
@@ -29,6 +32,8 @@ public class LevelScript : MonoBehaviour {
 
 
     void Start() {
+        HitGObject = new GameObject();
+        SelctedConstr = new GameObject();
         Unit = new List<GameObject>();
         UnitSelected = new List<GameObject>();
         UnitIndex = 0;
@@ -39,7 +44,6 @@ public class LevelScript : MonoBehaviour {
 
     void Update()
     {
-
         SingleTarget();
     }
 
@@ -50,30 +54,30 @@ public class LevelScript : MonoBehaviour {
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-            Debug.Log("1");
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
-                Debug.Log("2");
                 if (hit.transform.tag == "Minion" || hit.transform.tag == "Player")
                 {
                     SingleSelected = true;
-                    Debug.Log("3");
                     UnitSelected.Add(hit.transform.gameObject);
                     Select();
                     Draw = false;
                 }
-                else if (hit.transform.tag == "Terrain")
+                else if (hit.transform.tag == "Terrain" && hit.transform.tag != "GUI")
                 {
-                    Debug.Log("7");
+                    HitGObject = hit.transform.gameObject;
                     Deselect();
-                    // Если попали в Terrain отключаем таргет метку.
+                    ConstructDeselect();
+                    // Если попали в Terrain отключаем таргет метку или отключаем GUI здания.
 
                 }
                 else if (hit.transform.tag == "Barracks")
                 {
-                    hit.transform.GetComponent<RespawnWarrior>().GUIBarracks.enabled = true;
-
+                    SelctedConstr = hit.transform.gameObject;
+                    SelctedConstr.GetComponent<RespawnWarrior>().GUIBarracks.enabled = true;
+                    GUIConstrustion = true;
                 }
+
             }
         }
 
@@ -96,13 +100,10 @@ public class LevelScript : MonoBehaviour {
 
     void Select()
     {
-        Debug.Log("4");
         if (UnitSelected.Count > 0)
         {
-            Debug.Log("5");
             for (int j = 0; j < UnitSelected.Count; j++)
             {
-                Debug.Log("6");
                 UnitSelected[j].transform.Find("TargetMark").GetComponent<Renderer>().enabled = true;
             }
 
@@ -113,20 +114,34 @@ public class LevelScript : MonoBehaviour {
 
     void Deselect()
     {
-        Debug.Log("9");
-        if (UnitSelected.Count > 0)
+        if (HitGObject.transform.tag != "GUI")
         {
-            Debug.Log("10");
-            for (int j = 0; j < UnitSelected.Count; j++)
+            if (UnitSelected.Count > 0)
             {
-                UnitSelected[j].transform.Find("TargetMark").GetComponent<Renderer>().enabled = false;
-                Debug.Log("11");
-                
+                for (int j = 0; j < UnitSelected.Count; j++)
+                {
+                    UnitSelected[j].transform.Find("TargetMark").GetComponent<Renderer>().enabled = false;
+
+                }
             }
         }
-
     }
     // Снимаем таргет-метку с выделенных обьектов.
+
+    void ConstructDeselect()
+    {
+        if (GUIConstrustion == true)
+        {
+            if (SelctedConstr.GetComponent<RespawnWarrior>().GUIBarracks.enabled == true)
+            {
+                SelctedConstr.GetComponent<RespawnWarrior>().GUIBarracks.enabled = false;
+            }
+
+            GUIConstrustion = false;
+        }
+
+
+    }
 
     void OnGUI()
     {
