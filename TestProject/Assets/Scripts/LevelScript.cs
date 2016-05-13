@@ -9,7 +9,7 @@ public class LevelScript : MonoBehaviour {
     public GameObject Player;
     public GameObject Target;
     GameObject HitGObject;
-    Vector3 TargetPosition;
+        Vector3 TargetPosition;
     // Переменные для ситемы таргет-метки.
 
     GameObject SelctedConstr;
@@ -32,7 +32,6 @@ public class LevelScript : MonoBehaviour {
 
 
     void Start() {
-        HitGObject = new GameObject();
         SelctedConstr = new GameObject();
         Unit = new List<GameObject>();
         UnitSelected = new List<GameObject>();
@@ -65,7 +64,6 @@ public class LevelScript : MonoBehaviour {
                 }
                 else if (hit.transform.tag == "Terrain" && hit.transform.tag != "GUI")
                 {
-                    HitGObject = hit.transform.gameObject;
                     Deselect();
                     ConstructDeselect();
                     // Если попали в Terrain отключаем таргет метку или отключаем GUI здания.
@@ -100,22 +98,19 @@ public class LevelScript : MonoBehaviour {
 
     void Select()
     {
-        if (UnitSelected.Count > 0)
-        {
-            for (int j = 0; j < UnitSelected.Count; j++)
+            if (UnitSelected.Count > 0)
             {
-                UnitSelected[j].transform.Find("TargetMark").GetComponent<Renderer>().enabled = true;
+                for (int j = 0; j < UnitSelected.Count; j++)
+                {
+                    UnitSelected[j].transform.Find("TargetMark").GetComponent<Renderer>().enabled = true;
+                }
+
             }
-
-        } 
-
     }
     // Добавляем таргет-метку выделенныи обьектам, перебирая коллецию.
 
     void Deselect()
     {
-        if (HitGObject.transform.tag != "GUI")
-        {
             if (UnitSelected.Count > 0)
             {
                 for (int j = 0; j < UnitSelected.Count; j++)
@@ -124,7 +119,6 @@ public class LevelScript : MonoBehaviour {
 
                 }
             }
-        }
     }
     // Снимаем таргет-метку с выделенных обьектов.
 
@@ -145,48 +139,56 @@ public class LevelScript : MonoBehaviour {
 
     void OnGUI()
     {
-        GUI.skin = Skin;
-        GUI.depth = 99;
+        RaycastHit hit;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+        {
+            GUI.skin = Skin;
+            GUI.depth = 99;
 
-        if (Input.GetMouseButtonDown(0) && SingleSelected == false)
-        {
-            OnTargetNPC = false;
-            Deselect();
-            StartPosition = Input.mousePosition;
-            Draw = true;
-        }
-
-        if (Input.GetMouseButtonUp(0))
-        {
-            Draw = false;
-            if (SingleSelected == false)
+            if (Input.GetMouseButtonDown(0) && SingleSelected == false)
             {
-                Select();
-            }
-            // Отключаем единичный выбор при нажатии на terrain. 
-            OnTargetNPC = true;
-            SingleSelected = false;
-        }
-        
-        if (Draw)
-        {
-            UnitSelected.Clear();
-            EndPosition = Input.mousePosition;
-            if (StartPosition == EndPosition)
-            {
-                return;
+                HitGObject = hit.transform.gameObject;
+                if(HitGObject.transform.tag != "GUI")
+                { 
+                    OnTargetNPC = false;
+                    Deselect();
+                    StartPosition = Input.mousePosition;
+                    Draw = true;
+                }
             }
 
-            Rect = new Rect(Mathf.Min(EndPosition.x, StartPosition.x),
-                Screen.height - Mathf.Max(EndPosition.y, StartPosition.y),
-                Mathf.Max(EndPosition.x, StartPosition.x) - Mathf.Min(EndPosition.x, StartPosition.x),
-                Mathf.Max(EndPosition.y, StartPosition.y) - Mathf.Min(EndPosition.y, StartPosition.y)
-                );
-
-            GUI.Box(Rect, "");
-
-            for (int j = 0; j < Unit.Count; j++)
+            if (Input.GetMouseButtonUp(0))
             {
+                Draw = false;
+                if (SingleSelected == false)
+                {
+                    Select();
+                }
+                // Отключаем единичный выбор при нажатии на terrain. 
+                OnTargetNPC = true;
+                SingleSelected = false;
+            }
+
+            if (Draw)
+            {
+                UnitSelected.Clear();
+                EndPosition = Input.mousePosition;
+                if (StartPosition == EndPosition)
+                {
+                    return;
+                }
+
+                Rect = new Rect(Mathf.Min(EndPosition.x, StartPosition.x),
+                    Screen.height - Mathf.Max(EndPosition.y, StartPosition.y),
+                    Mathf.Max(EndPosition.x, StartPosition.x) - Mathf.Min(EndPosition.x, StartPosition.x),
+                    Mathf.Max(EndPosition.y, StartPosition.y) - Mathf.Min(EndPosition.y, StartPosition.y)
+                    );
+
+                GUI.Box(Rect, "");
+
+                for (int j = 0; j < Unit.Count; j++)
+                {
                     Vector2 Tmp = new Vector2(Camera.main.WorldToScreenPoint(Unit[j].transform.position).x, Screen.height - Camera.main.WorldToScreenPoint(Unit[j].transform.position).y);
                     // Трансформируем позицию объекта из мирового пространства, в пространство экрана.
                     if (Rect.Contains(Tmp))
@@ -201,6 +203,7 @@ public class LevelScript : MonoBehaviour {
                         }
 
                     }
+                }
             }
         }
     }

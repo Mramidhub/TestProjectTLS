@@ -71,8 +71,6 @@
     <Compile Include="Assets\NPC\Enemy\Mummy\C#\Spear_Shield.cs" />
     <Compile Include="Assets\NPC\Enemy\Mummy\C#\Sword_Shield.cs" />
     <Compile Include="Assets\NPC\Enemy\Mummy\C#\Weaponless.cs" />
-    <Compile Include="Assets\NPC\Minions\AShopExport\ShowAnimation.cs" />
-    <Compile Include="Assets\NPC\Minions\AShopExport\UIObjRotation.cs" />
     <Compile Include="Assets\Scripts\CamerController.cs" />
     <Compile Include="Assets\Scripts\GUIPlayer.cs" />
     <Compile Include="Assets\Scripts\LevelScript.cs" />
@@ -85,11 +83,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\NPC\Enemy\Mummy\Materials\myStandart.shader" />
-    <None Include="Assets\NPC\Enemy\PB_Spider\readme.txt" />
-    <None Include="Assets\NPC\Enemy\Skeletons\SkeletonData\animations.txt" />
-    <None Include="Assets\NPC\Minions\SpartanKing\animations.txt" />
-    <None Include="Assets\NPC\Minions\Warrior\animations.txt" />
     <None Include="Assets\Structure\Fortress Gate_Free\ReadMe.txt" />
+    <None Include="Assets\warlor_Bruce\bruce_animationList.txt" />
+    <None Include="Assets\warlor_Bruce\bruce_notes.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>

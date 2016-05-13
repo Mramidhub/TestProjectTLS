@@ -95,14 +95,27 @@ public class MoveEnemy : MonoBehaviour {
             GameCharacter.GetComponent<Animation>().CrossFade("attack01");
             if (Target.tag == "Minion" ||  Target.tag == "Player")
             {
-                Target.GetComponent<MoveMinion>().Health -= PAttack * Time.deltaTime;
+                if (Target.tag == "Minion")
+                {
+                    Target.GetComponent<MoveMinion>().Health -= PAttack * Time.deltaTime;
+                }
+                else if(Target.tag == "Player")
+                {
+                    Target.GetComponent<MovePlayer>().Health -= PAttack * Time.deltaTime;
+
+                }
             }
             else if (Target.tag == "DevelopersSofa")
             {
                 Target.GetComponent<Sofa>().Health -= PAttack * Time.deltaTime;
             }
             
-            if (Target.tag == "Minion" || Target.tag == "Player" && Target.GetComponent<MoveMinion>().Health <= 0)
+            if (Target.tag == "Minion" && Target.GetComponent<MoveMinion>().Health <= 0)
+            {
+                NonTarget = true;
+                EndPoint = PointDestination;
+            }
+            if (Target.tag == "Player" && Target.GetComponent<MovePlayer>().Health <= 0)
             {
                 NonTarget = true;
                 EndPoint = PointDestination;

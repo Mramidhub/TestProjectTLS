@@ -57,7 +57,7 @@ public class RespawnWarrior : MonoBehaviour {
 
         yield return new WaitForSeconds(TimeTraining);
 
-        RandomRespawnPosition = new Vector3(58 + Random.Range(-3f, 3f), 0, 45 + Random.Range(0f, 3f));
+        RandomRespawnPosition = new Vector3(42f + Random.Range(-3f, 3f), 0, 41.2f + Random.Range(0f, 3f));
         GameObject warrior = Instantiate(Warrior, RandomRespawnPosition, Quaternion.identity) as GameObject;
 
         Training = false;

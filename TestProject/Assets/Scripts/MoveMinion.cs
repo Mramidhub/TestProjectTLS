@@ -20,12 +20,14 @@ public class MoveMinion : MonoBehaviour {
     bool Moving;
     bool NonTarget;
     bool Die;
-    bool AutoMove;
+    bool AttakingOn;
 
     Vector3 TempNameObject;
 
     float MoveToRandomPortal;
     public GameObject TargetMark;
+
+    float Timer = 1f;
 
     GameObject Target;
     // Use this for initialization
@@ -39,9 +41,7 @@ public class MoveMinion : MonoBehaviour {
         Die = false;
         Moving = false;
         NonTarget = true;
-        AutoMove = true;
-        RandomEndPoint();
-
+        EndPoint = transform.position;
     }
 	
 	// Update is called once per frame
@@ -67,24 +67,19 @@ public class MoveMinion : MonoBehaviour {
     {
         if (TargetMark.GetComponent<Renderer>().enabled == true)
         {
-            AutoMove = false;
-
-            if (Input.GetMouseButtonDown(1))
+          if (Input.GetMouseButtonDown(1))
             {
                 NonTarget = true;
-                Debug.Log("5");
                 RaycastHit Hitt;
                 Ray ray1 = Camera.main.ScreenPointToRay(Input.mousePosition);
                 if (Physics.Raycast(ray1, out Hitt, Mathf.Infinity))
                 {
                     if (Hitt.transform.tag != "Enemy")
                     {
-                        Debug.Log("6");
                         EndPoint = Hitt.point;
                     }
                     else if (Hitt.transform.tag == "Enemy")
                     {
-                        Debug.Log("3");
                         NonTarget = false;
                         Target = Hitt.transform.gameObject;
                         Debug.Log(Target.ToString());
@@ -106,35 +101,15 @@ public class MoveMinion : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        if (AutoMove == true)
-        {
             if (other.transform.tag == "Enemy")
             {
                 Target = other.gameObject;
+                Debug.Log(Target.transform.tag.ToString());
                 NonTarget = false;
-            }
+                transform.GetComponent<SphereCollider>().enabled = false;
         }
     }
     // Если кто то входит в коллайдер миньон берет его в target.
-
-    void RandomEndPoint()
-    {
-        MoveToRandomPortal = Random.Range(0f, 3f);
-        if (MoveToRandomPortal < 1f)
-        {
-            EndPoint = new Vector3(84f, 0, 94f);
-        }
-        else if (MoveToRandomPortal < 2f)
-        {
-            EndPoint = new Vector3(50f, 0, 94f);
-        }
-        else if (MoveToRandomPortal < 3f)
-        {
-            EndPoint = new Vector3(14f, 0, 94f);
-        }
-        PointDestination = EndPoint;
-
-    }
 
     void Dead()
     {
@@ -154,26 +129,24 @@ public class MoveMinion : MonoBehaviour {
             EndPoint = Target.GetComponent<Transform>().position;
             MoveTo();
             AttackTarget();
+            Debug.Log("sdasd");
 
         }
     }
 
     void AttackTarget()
     {
-       // Debug.Log("Attack!!!");
         if (Vector3.Distance(Target.GetComponent<Transform>().position, transform.position) < 1.5f)
         {
-            GameCharacter.GetComponent<Animation>().CrossFade("attack");
             Target.GetComponent<MoveEnemy>().Health -= PAttack*Time.deltaTime;
-			if (Target.GetComponent<MoveEnemy>().Health < 0)
+            GameCharacter.GetComponent<Animation>().Play("attack");
+            if (Target.GetComponent<MoveEnemy>().Health < 0)
             {
-                Debug.Log("1");
                 NonTarget = true;
-                EndPoint = PointDestination;
+                transform.GetComponent<SphereCollider>().enabled = true;
             }
 			else
 			{
-               // Debug.Log("2");
                 NonTarget = false;
 			}
         }
@@ -187,7 +160,8 @@ public class MoveMinion : MonoBehaviour {
         Direction = new Vector3(Direction.x, 0, Direction.z);
         Direction.Normalize();
         transform.LookAt(EndPoint);
-        GameCharacter.GetComponent<Animation>().CrossFade("run");
+        GameCharacter.GetComponent<Animation>().Play("run");
+        
         float TargetPosition = Vector3.Distance(transform.position, EndPoint);
 
         if (TargetPosition > 1.5f)
@@ -197,7 +171,7 @@ public class MoveMinion : MonoBehaviour {
         }
 		else if (NonTarget == true)
         {
-            GameCharacter.GetComponent<Animation>().CrossFade("idle");
+            GameCharacter.GetComponent<Animation>().Play("idle");
 
         }
 
@@ -209,7 +183,7 @@ public class MoveMinion : MonoBehaviour {
         Die = true;
 
 
-        GameCharacter.GetComponent<Animation>().CrossFade("die");
+        GameCharacter.GetComponent<Animation>().Play("die");
 
         yield return new WaitForSeconds(2f);
 
@@ -222,6 +196,18 @@ public class MoveMinion : MonoBehaviour {
         LevelScript.Unit.RemoveAt(index);
 
         Destroy(transform.gameObject);
+    }
+
+    IEnumerator Attacking()
+    {
+        AttakingOn = true;
+
+        GameCharacter.GetComponent<Animation>().Play("attack");
+
+        yield return new WaitForSeconds(0.5f);
+
+        AttakingOn = false;
+
     }
     // Ждем пару сек ипрежде чем убить обьект находим его индекс в коллецкии Unit и удалем элемент.
 }

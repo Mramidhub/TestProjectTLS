@@ -46,7 +46,7 @@ public class GUIPlayer : MonoBehaviour {
 
 
 	}
-
+    // Активация, дезактивация GUI игрока.
 	void Statistic()
 	{
 		Lvl.text = " " + Player.GetComponent<MovePlayer> ().Lvl;
@@ -58,6 +58,6 @@ public class GUIPlayer : MonoBehaviour {
 		Exp.text = " " + Player.GetComponent<MovePlayer> ().Exp;
 
 	}
-
+    // Вывод статистики на экран.
 }
 
