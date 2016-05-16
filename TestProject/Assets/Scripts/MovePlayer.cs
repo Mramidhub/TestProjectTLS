@@ -211,7 +211,7 @@ public class MovePlayer : MonoBehaviour {
     {
         if (Target != null)
         {
-            if (transform.Find("TargetMark").GetComponent<Renderer>().enabled == true)
+            if (transform.Find("TargetMark").GetComponent<Renderer>().enabled == true && Target.GetComponent<MoveEnemy>().Health > 0)
             {
                 Target.transform.Find("TargetMark").GetComponent<Renderer>().enabled = true;
             }
