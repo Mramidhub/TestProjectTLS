@@ -9,11 +9,15 @@ public class RespawnMinion : MonoBehaviour {
     public Canvas GUIConstruction;
     public Text OrderWarrior;
     public Text SystemMsg;
+    public Text LvlBArrShow;
+    public Text PriceUpShow;
     public Sprite UnitImage;
     public int PriceUnit;
+
+    public int PriceUpLvl;
     int Order;
-    int BarrackLvl;
-    float TimeTraining;
+    public int BarrackLvl;
+    public float TimeTraining;
     bool Training;
 
     float RespawnTimeWarrior;
@@ -22,6 +26,7 @@ public class RespawnMinion : MonoBehaviour {
 
     void Start ()
     {
+        BarrackLvl = 1;
         TimeTraining = 2f;
         PriceUnit = 50;
     }
@@ -30,20 +35,15 @@ public class RespawnMinion : MonoBehaviour {
 	void Update ()
     {
         OrderWarrior.text = Order.ToString();
-
+        LvlBArrShow.text = "LVL" + BarrackLvl;
+        PriceUpShow.text = "Price" + transform.GetComponent<BarracksUp>().PriceUpLvl;
         if (LevelScript.StartGame == true)
         {
             Respawn();
         }
     }
 
-    void ProgresBarack()
-    {
-
-
-
-    }
-    
+   
     void Respawn()
     {
         
@@ -63,7 +63,7 @@ public class RespawnMinion : MonoBehaviour {
         }
         else
         {
-            SystemMsg.text = "У вас не хватает золота";
+            StartCoroutine(SysMsg());
 
         }
     }
@@ -98,4 +98,14 @@ public class RespawnMinion : MonoBehaviour {
 
     }
     // Тренировка миньона.
+
+    IEnumerator SysMsg()
+    {
+        SystemMsg.text = "У вас не хватает золота";
+
+        yield return new WaitForSeconds(2);
+
+        SystemMsg.text = "";
+    }
+    // Сообщение в системный чат о нехватке золота.
 }

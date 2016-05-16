@@ -26,6 +26,7 @@ public class MovePlayer : MonoBehaviour {
     public float PAttack = 100f;
     public float speed = 0.2f;
     public float Health = 200f;
+    public float MaxHealth;
 	public float AtkSpeed = 400f;
 	public float Armor = 100f;
 	public int Gold = 0;
@@ -52,8 +53,13 @@ public class MovePlayer : MonoBehaviour {
     bool MetHowOn;
     bool StartExplosion;
     bool ReusedOnMS;
+    bool MarkExplOn;
+    GameObject TempMarkExplosion;
     public Text ReusedTimerShowMS;
+    public Text LvlShowMS;
     public float ReusedTimeMS;
+    public int lvlIa;
+    public float RadiusDamageMS;
     // Переменные для скилла MeteorShower;.
 
     public int LvlSkillIA;
@@ -70,17 +76,25 @@ public class MovePlayer : MonoBehaviour {
     bool IceArrFly;
     bool ReusedOnIA;
     public Text ReusedTimerShowIA;
+    public Text LvlShowIA;
     public float ReusedTimeIA;
     public GameObject IceArrow;
+    public int lvlMs;
     // Переменные для скилла IceArrow.
 
     public Animation AnimPlayer;
+    public GameObject TargetMark;
+    public GameObject Fountain;
+    public GameObject HealingSprite;
 
 
     // Use this for initialization
     void Start () 
 	{
+        MaxHealth = Health;
+        UpIA.GetComponent<Image>().enabled = false;
         UpIA.enabled = false;
+        UpMS.GetComponent<Image>().enabled = false;
         UpMS.enabled = false;
         LvlUpAnim.GetComponent<ParticleSystem>().enableEmission = false;
         SkillUsed = false;
@@ -90,6 +104,9 @@ public class MovePlayer : MonoBehaviour {
         MetHowOn = false;
         ReusedTimeMS = 20f;
         ReusedOnMS = false;
+        MarkExplOn = false;
+        RadiusDamageMS = 5f;
+        lvlMs = 1;
         // MetShow.
 
 
@@ -99,6 +116,7 @@ public class MovePlayer : MonoBehaviour {
         IceArrOn = false;
         IceArrFly = false;
         ReusedTimeIA = 15f;
+        lvlIa = 1;
         // IceArrow.
 
 
@@ -116,6 +134,8 @@ public class MovePlayer : MonoBehaviour {
         HotKeyOn();
         ReusedIceArr();
         ReusedMetShower();
+        FointainHealing();
+        EnemyTargetMarkOn();
 
         if (IceArrOn == true)
         {
@@ -160,7 +180,6 @@ public class MovePlayer : MonoBehaviour {
                     else if (Hit.transform.GetComponent<Rigidbody>().tag == "Enemy" && Hit.transform.GetComponent<Rigidbody>().tag != "Construction")
                     {
 						Target = Hit.transform.gameObject;
-                        Target.GetComponent<MoveEnemy>().TargetMark.GetComponent<Renderer>().enabled = true;
 						MinionTargetOn = true;
 					}
 				}
@@ -168,6 +187,41 @@ public class MovePlayer : MonoBehaviour {
 		}
      }
 
+    void FointainHealing()
+    {
+        if (Vector3.Distance(transform.position, Fountain.transform.position) < 7f)
+        {
+            HealingSprite.GetComponent<Renderer>().enabled = true;
+            if (Health < MaxHealth)
+            {
+                Health = Health + 10f * Time.deltaTime;
+            }
+
+        }
+        else
+        {
+            HealingSprite.GetComponent<Renderer>().enabled = false;
+
+        }
+
+    }
+    // Если рядом с фонтаном то идет лечение.
+
+    void EnemyTargetMarkOn()
+    {
+        if (Target != null)
+        {
+            if (transform.Find("TargetMark").GetComponent<Renderer>().enabled == true)
+            {
+                Target.transform.Find("TargetMark").GetComponent<Renderer>().enabled = true;
+            }
+            else
+            {
+                Target.transform.Find("TargetMark").GetComponent<Renderer>().enabled = false;
+            }
+        }
+    }
+    // Включение метки взятой в таргет цели, если выбран персонаж. 
 
     void LvlUp()
     {
@@ -179,7 +233,9 @@ public class MovePlayer : MonoBehaviour {
             Armor += ArmorUp2lvl;
             StartCoroutine(LvlUpping());
             Upping = true;
+            UpIA.GetComponent<Image>().enabled= true;
             UpIA.enabled = true;
+            UpMS.GetComponent<Image>().enabled = true;
             UpMS.enabled = true;
         }
         if (Exp >= ExpUp3lvl && Lvl < 3)
@@ -190,25 +246,47 @@ public class MovePlayer : MonoBehaviour {
             Armor += ArmorUp3lvl;
             StartCoroutine(LvlUpping());
             Upping = true;
+            UpIA.GetComponent<Image>().enabled = true;
             UpIA.enabled = true;
+            UpMS.GetComponent<Image>().enabled = true;
             UpMS.enabled = true;
         }
     }
     // Поднятие характеристик при достижении новго уровня.
 
-    void EnchantIArrow()
+    public void EnchantIArrow()
     {
+        IceArrowDamage *= 1.5f;
+        IceArrAtkSlow *= 1.5f;
+        IceArrSpdSlow *= 1.5f;
+        RadiusIA *= 1.5f;
+        Duration *= 1.5f;
 
+        ReusedTimeIA -= 2f;
 
+        lvlIa++;
+
+        UpIA.GetComponent<Image>().enabled = false;
+        UpIA.enabled = false;
+        UpMS.GetComponent<Image>().enabled = false;
+        UpMS.enabled = false;
 
     }
     // Улучшение Ледяной стрелы.
 
-    void EnchantMShower()
+     public void EnchantMShower()
     {
+        MetShowDamage *= 1.5f;
+        RadiusDamageMS *= 1.5f;
 
+        ReusedTimeMS -= 2f;
 
+        lvlMs++;
 
+        UpIA.GetComponent<Image>().enabled = false;
+        UpIA.enabled = false;
+        UpMS.GetComponent<Image>().enabled = false;
+        UpMS.enabled = false;
     }
     // УЛучшение Метеоритного Долждя.
 
@@ -284,6 +362,7 @@ public class MovePlayer : MonoBehaviour {
 
 
     }
+    // Атака врагов.
 
     void Dead()
     {
@@ -302,6 +381,7 @@ public class MovePlayer : MonoBehaviour {
 
 
     }
+    // Ну.. собсна.. смерть...
 
     void HotKeyOn()
     {
@@ -430,6 +510,8 @@ public class MovePlayer : MonoBehaviour {
 
     void ReusedIceArr()
     {
+        LvlShowIA.text = "" + lvlIa.ToString();
+
         if (ReusedOnIA == true)
         {
             if (ReusedTimeIA > 0)
@@ -462,6 +544,29 @@ public class MovePlayer : MonoBehaviour {
 
     void MeteorShower()
     {
+        if (StartExplosion == false)
+        {
+            RaycastHit Hit1;
+            Ray ray1 = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray1, out Hit1, Mathf.Infinity))
+            {
+                if (MarkExplOn == false)
+                {
+                    GameObject TempMarkExpl = Instantiate(TargetMark, Hit1.point, Quaternion.identity) as GameObject;
+                    TempMarkExplosion = TempMarkExpl;
+                    TempMarkExplosion.transform.Rotate(90f, TempMarkExplosion.transform.rotation.y, transform.rotation.z);
+                    TempMarkExplosion.transform.localScale = new Vector3(RadiusDamageMS, RadiusDamageMS);
+                    MarkExplOn = true;
+                }
+                else
+                {
+                    Vector3 NewPosition = new Vector3(Hit1.point.x, 0.1f, Hit1.point.z);
+                    TempMarkExplosion.transform.position = NewPosition;
+
+                }
+            }
+        }
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             SkillUsed = false;
@@ -478,6 +583,7 @@ public class MovePlayer : MonoBehaviour {
 
         if (Input.GetMouseButton(0) && ReusedOnMS == false)
         {
+            Destroy(TempMarkExplosion);
             RaycastHit Hit;
             Ray Ray1 = Camera.main.ScreenPointToRay(Input.mousePosition);
             SkillUsed = false;
@@ -487,7 +593,7 @@ public class MovePlayer : MonoBehaviour {
                 {
                     StartCoroutine(Explosion(Hit.point));
                 }
-                Collider[] HitCollidaers = Physics.OverlapSphere(Hit.transform.position, 5f);
+                Collider[] HitCollidaers = Physics.OverlapSphere(Hit.transform.position, RadiusDamageMS);
                 int i = 0;
                 while (i < HitCollidaers.Length)
                 {
@@ -502,6 +608,7 @@ public class MovePlayer : MonoBehaviour {
                     MetHowOn = false;
                     ReusedOnMS = true;
                     StartExplosion = false;
+                    MarkExplOn = false;
                 }
             }
 
@@ -512,6 +619,8 @@ public class MovePlayer : MonoBehaviour {
 
     void ReusedMetShower()
     {
+        LvlShowMS.text = "" + lvlMs.ToString();
+
         if (ReusedOnMS == true)
         {
             if (ReusedTimeMS > 0)
@@ -557,6 +666,7 @@ public class MovePlayer : MonoBehaviour {
 
         StartExplosion = false;
     }
+    // Анимация Взрыва.
 
         IEnumerator DeadTime()
     {
@@ -584,7 +694,7 @@ public class MovePlayer : MonoBehaviour {
     IEnumerator LvlUpping()
     {
         LvlUpAnim.GetComponent<ParticleSystem>().enableEmission = true;
-
+        
         yield return new WaitForSeconds(4f);
 
         LvlUpAnim.GetComponent<ParticleSystem>().enableEmission = false;

@@ -66,6 +66,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\BarracksUp.cs" />
     <Compile Include="Assets\Scripts\CamerController.cs" />
     <Compile Include="Assets\Scripts\GUIPlayer.cs" />
     <Compile Include="Assets\Scripts\IceArrow.cs" />

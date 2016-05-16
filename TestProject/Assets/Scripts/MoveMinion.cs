@@ -65,10 +65,27 @@ public class MoveMinion : MonoBehaviour {
             NoEnemy();
         }
 
+        EnemyTargetMarkOn();
         ControlTarget();
         Dead();
 
     }
+
+    void EnemyTargetMarkOn()
+    {
+        if (Target != null)
+        {
+            if (transform.Find("TargetMark").GetComponent<Renderer>().enabled == true)
+            {
+                Target.transform.Find("TargetMark").GetComponent<Renderer>().enabled = true;
+            }
+            else
+            {
+                Target.transform.Find("TargetMark").GetComponent<Renderer>().enabled = false;
+            }
+        }
+    }    
+    // Включение метки взятой в таргет цели, если выбран миьон. 
 
     void ControlTarget()
     {

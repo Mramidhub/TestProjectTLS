@@ -5,6 +5,11 @@ using UnityEngine.UI;
 
 public class LevelScript : MonoBehaviour {
 
+    public GameObject BarrTMage;
+    public GameObject BarrBarr;
+    // Переменные для  включения \ отключения колайдера в GUI Зданий
+
+
     public static bool EnemyOnMap = true;
     public static bool OnTargetNPC;
     public static int UnitIndex;
@@ -54,6 +59,7 @@ public class LevelScript : MonoBehaviour {
         EndGameLoose = false;
         SingleSelected = false;
         StartCoroutine(GameStart());
+
      
     }
 
@@ -126,7 +132,16 @@ public class LevelScript : MonoBehaviour {
                 {
                     SelctedConstr = hit.transform.gameObject;
                     SelctedConstr.GetComponent<RespawnMinion>().GUIConstruction.enabled = true;
+                    BarrBarr.GetComponent<BoxCollider>().enabled = true;
                     GUIConstrustion = true;
+                }
+                else if (hit.transform.tag == "MageTower")
+                {
+                    SelctedConstr = hit.transform.gameObject;
+                    SelctedConstr.GetComponent<RespawnMinion>().GUIConstruction.enabled = true;
+                    BarrTMage.GetComponent<BoxCollider>().enabled = true;
+                    GUIConstrustion = true;
+
                 }
                 else if (hit.transform.tag == "Enemy")
                 {
@@ -186,6 +201,16 @@ public class LevelScript : MonoBehaviour {
             if (SelctedConstr.GetComponent<RespawnMinion>().GUIConstruction.enabled == true)
             {
                 SelctedConstr.GetComponent<RespawnMinion>().GUIConstruction.enabled = false;
+                if (SelctedConstr.transform.tag == "TowerMage")
+                {
+                    BarrTMage.GetComponent<BoxCollider>().enabled = true;
+
+                }
+                if (SelctedConstr.transform.tag == "Barracks")
+                {
+                    BarrBarr.GetComponent<BoxCollider>().enabled = true;
+
+                }
             }
 
             GUIConstrustion = false;
@@ -193,6 +218,8 @@ public class LevelScript : MonoBehaviour {
 
 
     }
+    // Вырубаем GUI выбранного здания.
+
 
     void OnGUI()
     {
