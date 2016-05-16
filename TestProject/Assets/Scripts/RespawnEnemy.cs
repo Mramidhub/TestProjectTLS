@@ -3,56 +3,81 @@ using System.Collections;
 
 public class RespawnEnemy : MonoBehaviour {
 
-    public GameObject GreenGoblin;
+    public GameObject RangeGoblin;
+    public GameObject Demon;
+    public GameObject Cyclop;
 	bool RespawnOn;
 	bool StartGame;
 	bool GroupRespawnOn;
-    // Блок переменных врагов.
+    bool FirstRespawn;
 
-    float RespawnTimeGoblin;
+    public static float RespTimeRGoblin = 10f;
+    public static float RespTimeDemon = 10f;
+    public static float RespTimeCyclop = 40f;
+
+
+    float TempRespTimeRGoblin;
+    float TempRespTimeDemon;
+    float TempRespTimeCyclop;
+
     Vector3 RandomRespawnPosition;
 
-    // Use this for initialization
+
     void Start () {
-        RespawnTimeGoblin = 2f;
 		RespawnOn = false;
 		StartGame = false;
 		GroupRespawnOn = false;
+        FirstRespawn = false;
 
-		StartCoroutine (StartRespawn ());
+        TempRespTimeCyclop = RespTimeCyclop;
+        TempRespTimeDemon = RespTimeDemon;
+        TempRespTimeRGoblin = RespTimeRGoblin;
     }
 	
 	// Update is called once per frame
 	void Update () {
-		if (StartGame == true && GroupRespawnOn == false) 
+		if (LevelScript.StartGame == true && GroupRespawnOn == false) 
 		{
 			StartCoroutine (GroupSpawn ());
 		}
 
-		if(RespawnOn == true)
+        if (FirstRespawn == false)
+        {
+            TempRespTimeCyclop =20;
+            TempRespTimeDemon = 10;
+            TempRespTimeRGoblin = 10;
+        }
+
+        if (RespawnOn == true)
 		{
-       	 	RandomRespawnPosition = new Vector3(Random.Range(-1f, 1f), transform.position.y, Random.Range(-1f, 1f));
-       		RespawnTimeGoblin -= Time.deltaTime;
+            if (FirstRespawn == true)
+            {
+                TempRespTimeCyclop -= Time.deltaTime;
+                TempRespTimeDemon -= Time.deltaTime;
+                TempRespTimeRGoblin -= Time.deltaTime;
+            }
 
-        	if (RespawnTimeGoblin < 0f)
-      		  {
+            RandomRespawnPosition = new Vector3(Random.Range(-1f, 1f), transform.position.y, Random.Range(-1f, 1f));
 
-           		 GameObject Goblin = Instantiate(GreenGoblin, transform.position + RandomRespawnPosition, Quaternion.identity) as GameObject;
-           		 RespawnTimeGoblin = 2f;
-       		 }
+            if (TempRespTimeCyclop < 0f)
+            {
+                GameObject EnemyCyclop = Instantiate(Cyclop, transform.position + RandomRespawnPosition, Quaternion.identity) as GameObject;
+                TempRespTimeCyclop = RespTimeCyclop;
+            }
+            if (TempRespTimeDemon < 0f)
+            {
+                GameObject EnemyDemon = Instantiate(Demon, transform.position + RandomRespawnPosition, Quaternion.identity) as GameObject;
+                TempRespTimeDemon = RespTimeDemon;
+            }
+            if (TempRespTimeRGoblin < 0f)
+            {
+                GameObject EnemyDemon = Instantiate(RangeGoblin, transform.position + RandomRespawnPosition, Quaternion.identity) as GameObject;
+                TempRespTimeRGoblin = RespTimeRGoblin;
+            }
+            FirstRespawn = true;
         // Таймер респавна зеленых гоблинов.
 		}
 	
-	}
-
-
-	IEnumerator StartRespawn()
-	{
-
-		yield return new WaitForSeconds (30f);
-
-		StartGame = true;
-
 	}
 
 	// После запуска игры ждем 30 сек , прежде чем мобы начнут респавниться. 
@@ -62,15 +87,10 @@ public class RespawnEnemy : MonoBehaviour {
 	{
 		GroupRespawnOn = true;
 		RespawnOn = true;
-
-		yield return new WaitForSeconds (6f);
-
-		RespawnOn = false;
-
-		yield return new WaitForSeconds (10f);
-
-		GroupRespawnOn = false;
+		yield return new WaitForSeconds (LevelScript.WaveTime);
+        RespawnOn = false;
+        GroupRespawnOn = false;
 	}
-	// Респавн гоблинов  группами по три раз в 6 секунд.
+    // Респавн гоблинов  группами по три раз в 6 секунд.
 
 }

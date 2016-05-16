@@ -13,6 +13,7 @@ public class GUIPlayer : MonoBehaviour {
 	public Text Armor;
 	public Text Gold;
 	public Text Exp;
+    public Text HP;
 
 	// Use this for initialization
 	void Start () {
@@ -49,14 +50,14 @@ public class GUIPlayer : MonoBehaviour {
     // Активация, дезактивация GUI игрока.
 	void Statistic()
 	{
-		Lvl.text = " " + Player.GetComponent<MovePlayer> ().Lvl;
-		PAtk.text = " " +  Player.GetComponent<MovePlayer> ().PAttack;
-		AtkSpeed.text = " " + Player.GetComponent<MovePlayer> ().AtkSpeed;
-		Speed.text = " " + Player.GetComponent<MovePlayer> ().speed;
-		Armor.text = " " + Player.GetComponent<MovePlayer> ().Armor;
-		Gold.text = " " + Player.GetComponent<MovePlayer> ().Gold;
-		Exp.text = " " + Player.GetComponent<MovePlayer> ().Exp;
-
+		Lvl.GetComponent<Text>().text = " " + Player.GetComponent<MovePlayer> ().Lvl;
+		PAtk.GetComponent<Text>().text = " " +  Player.GetComponent<MovePlayer> ().PAttack;
+		AtkSpeed.GetComponent<Text>().text = " " + Player.GetComponent<MovePlayer> ().AtkSpeed;
+		Speed.GetComponent<Text>().text = " " + Player.GetComponent<MovePlayer> ().speed;
+		Armor.GetComponent<Text>().text = " " + Player.GetComponent<MovePlayer> ().Armor;
+		Gold.GetComponent<Text>().text = " " + Player.GetComponent<MovePlayer> ().Gold;
+		Exp.GetComponent<Text>().text = " " + Player.GetComponent<MovePlayer> ().Exp;
+        HP.GetComponent<Text>().text = "HP: " + (int)Player.GetComponent<MovePlayer>().Health;
 	}
     // Вывод статистики на экран.
 }

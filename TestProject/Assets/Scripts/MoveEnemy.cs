@@ -14,6 +14,7 @@ public class MoveEnemy : MonoBehaviour {
 	public int Exp;
     // Показатели персонажа.
 
+    
     float SphereCastTimer = 0.5f;
 
     Vector3 EndPoint;
@@ -24,13 +25,17 @@ public class MoveEnemy : MonoBehaviour {
     bool NonTarget;
     bool Ontarget;
     bool Die;
+    bool Punch;
 
     GameObject Target;
     public GameObject TargetMark;
 
+    public Animation AnimGoblin;
+
 
 	void Start ()
     {
+        Punch = false;
         Die = false;
         Moving = false;
         NonTarget = true;
@@ -39,8 +44,8 @@ public class MoveEnemy : MonoBehaviour {
 	}
 
 
-	void Update () {
-
+	void Update ()
+    {
         if (Die == false)
         {
             MoveToTarget();
@@ -65,12 +70,9 @@ public class MoveEnemy : MonoBehaviour {
 
     void Dead()
     {
-        if (Health < 0.3f)
+        if (Health < 0f)
         {
-
             StartCoroutine(DeadTime());
-       
-
         }
 
     }
@@ -90,24 +92,30 @@ public class MoveEnemy : MonoBehaviour {
 
     void AttackTarget()
     {
-        if (Vector3.Distance(Target.GetComponent<Transform>().position, transform.position) < 1.5f)
+        if (Vector3.Distance(Target.GetComponent<Transform>().position, transform.position) < AttackRange)
         {
-            GameCharacter.GetComponent<Animation>().CrossFade("attack01");
+            Moving = false;
+            GameCharacter.GetComponent<Animation>().CrossFade("attack");
+            AnimGoblin["attack"].speed = AttackSpeed;
+
             if (Target.tag == "Minion" ||  Target.tag == "Player")
             {
                 if (Target.tag == "Minion")
                 {
-                    Target.GetComponent<MoveMinion>().Health -= PAttack * Time.deltaTime;
+                    float TempPAttack = (PAttack / 100) * (100 - Target.GetComponent<MoveMinion>().Armor);
+                    // Высчитываем нанесенный урон, с учетом армора  цели.
+                    Target.GetComponent<MoveMinion>().Health -= TempPAttack * Time.deltaTime * AttackSpeed;
+                    // Наносим урон с учетом скорости атаки.
                 }
                 else if(Target.tag == "Player")
                 {
-                    Target.GetComponent<MovePlayer>().Health -= PAttack * Time.deltaTime;
-
+                        float TempPAttack = (PAttack / 100) * (100 - Target.GetComponent<MovePlayer>().Armor);
+                        Target.GetComponent<MovePlayer>().Health -= TempPAttack * Time.deltaTime * AttackSpeed;
                 }
             }
             else if (Target.tag == "DevelopersSofa")
             {
-                Target.GetComponent<Sofa>().Health -= PAttack * Time.deltaTime;
+                Target.GetComponent<Sofa>().Health -= PAttack * Time.deltaTime * AttackSpeed;
             }
             
             if (Target.tag == "Minion" && Target.GetComponent<MoveMinion>().Health <= 0)
@@ -143,13 +151,13 @@ public class MoveEnemy : MonoBehaviour {
         GameCharacter.GetComponent<Animation>().CrossFade("run");
         float TargetPosition = Vector3.Distance(transform.position, EndPoint);
 
-        if (TargetPosition > 1.5f)
+        if (TargetPosition > AttackRange)
         {
-            transform.Translate(Direction * speed, Space.World);
+            transform.Translate(Direction * speed * Time.deltaTime, Space.World);
         }
 		else if(NonTarget == true)
         {
-            GameCharacter.GetComponent<Animation>().CrossFade("stand");
+            GameCharacter.GetComponent<Animation>().CrossFade("idle");
 
         }
 
@@ -157,15 +165,16 @@ public class MoveEnemy : MonoBehaviour {
     }
     // Движение к заданной точке.
 
+
+    
+
     IEnumerator DeadTime()
     {
         Die = true;
-        GameCharacter.GetComponent<Animation>().CrossFade("dead");
-        
+        GameCharacter.GetComponent<Animation>().CrossFade("die");
+        transform.GetComponent<SphereCollider>().enabled = false;
         yield return new WaitForSeconds(2f);
-
-        Destroy(GameCharacter.gameObject);
-
+        Destroy(gameObject);
     }
     // Моб падает и через несколько секунд GO уничтожаеться.
 }

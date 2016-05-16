@@ -50,22 +50,22 @@ public class CamerController : MonoBehaviour {
         {
                 if (Input.mousePosition.x <= 0 && transform.position.z < 95f)
                 {
-                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - CameraSpeed);
+                    transform.position = new Vector3(transform.position.x - CameraSpeed, transform.position.y, transform.position.z);
 
                 }
                 else if (Input.mousePosition.x >= Screen.width && transform.position.z > 4f)
                 {
-                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + CameraSpeed);
+                    transform.position = new Vector3(transform.position.x + CameraSpeed, transform.position.y, transform.position.z);
 
                 }
                 else if (Input.mousePosition.y <= 0 && transform.position.x > 0f)
                 {
-                    transform.position = new Vector3(transform.position.x + CameraSpeed, transform.position.y, transform.position.z);
+                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - CameraSpeed);
 
                 }
                 else if (Input.mousePosition.y >= Screen.height && transform.position.x < 76f)
                 {
-                    transform.position = new Vector3(transform.position.x - CameraSpeed, transform.position.y, transform.position.z);
+                    transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + CameraSpeed);
 
                 }
 

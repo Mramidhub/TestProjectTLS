@@ -1,13 +1,23 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class LevelScript : MonoBehaviour {
 
+    public static bool EnemyOnMap = true;
     public static bool OnTargetNPC;
     public static int UnitIndex;
+    public static bool  StartGame;
+    public static int WaveLvl;
+    public static float WaveTime;
     public GameObject Player;
     public GameObject Target;
+    public Text StartGameTimer;
+    public GameObject Sofa;
+    public Text HPSofa;
+    float StartTimer;
+    float TimerFindEnemy;
     GameObject HitGObject;
         Vector3 TargetPosition;
     // Переменные для ситемы таргет-метки.
@@ -32,19 +42,62 @@ public class LevelScript : MonoBehaviour {
 
 
     void Start() {
+        WaveLvl = 1;
+        WaveTime = 60f;
+        StartTimer = 10f;
         SelctedConstr = new GameObject();
         Unit = new List<GameObject>();
         UnitSelected = new List<GameObject>();
         UnitIndex = 0;
+        TimerFindEnemy = 2f;
         OnTargetNPC = true;
         EndGameLoose = false;
         SingleSelected = false;
+        StartCoroutine(GameStart());
+     
     }
 
     void Update()
     {
+        HPSofa.text = "HP: " + (int)Sofa.GetComponent<Sofa>().Health;
         SingleTarget();
+        EnemysOnMap();
+        StartTime();
     }
+
+    void NextWave()
+    {
+        WaveTime -= Time.deltaTime;
+        if (WaveTime < 0)
+        {
+            WaveLvl++;
+            WaveTime = 40f;
+            WaveTime*= WaveLvl;
+            StartCoroutine(GameStart());
+        }
+
+    }
+    // Повышение сложности волны монстров.
+
+    void EnemysOnMap()
+    {
+        TimerFindEnemy -= Time.deltaTime;
+        if (TimerFindEnemy < 0)
+        {
+            if (GameObject.FindGameObjectWithTag("Enemy"))
+            {
+                EnemyOnMap = true;
+                TimerFindEnemy = 2f;
+            }
+            else
+            {
+                EnemyOnMap = false;
+                TimerFindEnemy = 2f;
+            }
+        }
+
+    }
+    // Проверяем есть ли враги на карте.
 
     void SingleTarget()
     {
@@ -72,8 +125,14 @@ public class LevelScript : MonoBehaviour {
                 else if (hit.transform.tag == "Barracks")
                 {
                     SelctedConstr = hit.transform.gameObject;
-                    SelctedConstr.GetComponent<RespawnWarrior>().GUIBarracks.enabled = true;
+                    SelctedConstr.GetComponent<RespawnMinion>().GUIConstruction.enabled = true;
                     GUIConstrustion = true;
+                }
+                else if (hit.transform.tag == "Enemy")
+                {
+                    Player.GetComponent<MovePlayer>().Target = hit.transform.gameObject;
+                    Player.GetComponent<MovePlayer>().MinionTargetOn = true;
+                    hit.transform.GetComponent<MoveEnemy>().TargetMark.GetComponent<Renderer>().enabled = true;
                 }
 
             }
@@ -82,8 +141,6 @@ public class LevelScript : MonoBehaviour {
 
     }
     // Выбор одиночной цели.
-
-   
 
     bool ChekUnit(GameObject unit)
     {
@@ -126,9 +183,9 @@ public class LevelScript : MonoBehaviour {
     {
         if (GUIConstrustion == true)
         {
-            if (SelctedConstr.GetComponent<RespawnWarrior>().GUIBarracks.enabled == true)
+            if (SelctedConstr.GetComponent<RespawnMinion>().GUIConstruction.enabled == true)
             {
-                SelctedConstr.GetComponent<RespawnWarrior>().GUIBarracks.enabled = false;
+                SelctedConstr.GetComponent<RespawnMinion>().GUIConstruction.enabled = false;
             }
 
             GUIConstrustion = false;
@@ -146,7 +203,7 @@ public class LevelScript : MonoBehaviour {
             GUI.skin = Skin;
             GUI.depth = 99;
 
-            if (Input.GetMouseButtonDown(0) && SingleSelected == false)
+            if (Input.GetMouseButtonDown(0) && SingleSelected == false && Player.GetComponent<MovePlayer>().SkillUsed == false)
             {
                 HitGObject = hit.transform.gameObject;
                 if(HitGObject.transform.tag != "GUI")
@@ -208,5 +265,29 @@ public class LevelScript : MonoBehaviour {
         }
     }
     // Рисуем рамку, добавляем обьекты в коллецию.
+
+    void StartTime()    
+    {
+        if (StartTimer > 0)
+        {
+            StartTimer -= Time.deltaTime;
+            StartGameTimer.GetComponent<Text>().text = "До начала следующей волны: " + (int)StartTimer;
+        }
+        else
+        {
+            StartGameTimer.GetComponent<Text>().enabled = false;
+        }
+    }
+
+    IEnumerator GameStart()
+    {
+        LevelScript.StartGame = false;
+
+        yield return new WaitForSeconds(10f);
+
+
+        LevelScript.StartGame = true;
+
+    }
 
 }

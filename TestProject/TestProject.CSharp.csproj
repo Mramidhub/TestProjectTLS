@@ -61,31 +61,27 @@
     <Reference Include="UnityEditor">
       <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
     </Reference>
+    <Reference Include="Assembly-UnityScript-firstpass">
+      <HintPath>Library\ScriptAssemblies\Assembly-UnityScript-firstpass.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\NPC\Enemy\Mummy\C#\Axe.cs" />
-    <Compile Include="Assets\NPC\Enemy\Mummy\C#\BaseAnimController.cs" />
-    <Compile Include="Assets\NPC\Enemy\Mummy\C#\CameraController.cs" />
-    <Compile Include="Assets\NPC\Enemy\Mummy\C#\MainController.cs" />
-    <Compile Include="Assets\NPC\Enemy\Mummy\C#\Spear.cs" />
-    <Compile Include="Assets\NPC\Enemy\Mummy\C#\Spear_Shield.cs" />
-    <Compile Include="Assets\NPC\Enemy\Mummy\C#\Sword_Shield.cs" />
-    <Compile Include="Assets\NPC\Enemy\Mummy\C#\Weaponless.cs" />
     <Compile Include="Assets\Scripts\CamerController.cs" />
     <Compile Include="Assets\Scripts\GUIPlayer.cs" />
+    <Compile Include="Assets\Scripts\IceArrow.cs" />
     <Compile Include="Assets\Scripts\LevelScript.cs" />
     <Compile Include="Assets\Scripts\MoveEnemy.cs" />
     <Compile Include="Assets\Scripts\MoveMinion.cs" />
     <Compile Include="Assets\Scripts\MovePlayer.cs" />
     <Compile Include="Assets\Scripts\RespawnEnemy.cs" />
-    <Compile Include="Assets\Scripts\RespawnWarrior.cs" />
+    <Compile Include="Assets\Scripts\RespawnMinion.cs" />
     <Compile Include="Assets\Scripts\Sofa.cs" />
+    <Compile Include="Assets\Scripts\TargMarkEnemy.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\NPC\Enemy\Mummy\Materials\myStandart.shader" />
+    <None Include="Assets\NPC\Minions\warlor_Bruce\bruce_animationList.txt" />
+    <None Include="Assets\NPC\Minions\warlor_Bruce\bruce_notes.txt" />
     <None Include="Assets\Structure\Fortress Gate_Free\ReadMe.txt" />
-    <None Include="Assets\warlor_Bruce\bruce_animationList.txt" />
-    <None Include="Assets\warlor_Bruce\bruce_notes.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
