@@ -5,6 +5,13 @@ using UnityEngine.UI;
 
 public class LevelScript : MonoBehaviour {
 
+    public GameObject[] Portal;
+    public static int WaveLvl;
+    public static float WaveTime;
+    public static bool StartGame;
+    float StartTimer;
+    // Переменне для системы роста волны рпотивников.
+
     public GameObject BarrTMage;
     public GameObject BarrBarr;
     // Переменные для  включения \ отключения колайдера в GUI Зданий
@@ -13,19 +20,17 @@ public class LevelScript : MonoBehaviour {
     public static bool EnemyOnMap = true;
     public static bool OnTargetNPC;
     public static int UnitIndex;
-    public static bool  StartGame;
-    public static int WaveLvl;
-    public static float WaveTime;
     public GameObject Player;
     public GameObject Target;
     public Text StartGameTimer;
-    public GameObject Sofa;
-    public Text HPSofa;
-    float StartTimer;
     float TimerFindEnemy;
     GameObject HitGObject;
-        Vector3 TargetPosition;
-    // Переменные для ситемы таргет-метки.
+    Vector3 TargetPosition;
+    // Переменные для ситемы таргет-метки и системы обнаруженя враго на карте.
+
+    public GameObject Sofa;
+    public Text HPSofa;
+    // Для вывода на экран HP Дивана.
 
     GameObject SelctedConstr;
 
@@ -49,7 +54,7 @@ public class LevelScript : MonoBehaviour {
     void Start() {
         WaveLvl = 1;
         WaveTime = 60f;
-        StartTimer = 10f;
+        StartTimer = 30f;
         SelctedConstr = new GameObject();
         Unit = new List<GameObject>();
         UnitSelected = new List<GameObject>();
@@ -58,7 +63,7 @@ public class LevelScript : MonoBehaviour {
         OnTargetNPC = true;
         EndGameLoose = false;
         SingleSelected = false;
-        StartCoroutine(GameStart());
+        StartCoroutine(GameStart(StartTimer));
 
      
     }
@@ -68,7 +73,7 @@ public class LevelScript : MonoBehaviour {
         HPSofa.text = "HP: " + (int)Sofa.GetComponent<Sofa>().Health;
         SingleTarget();
         EnemysOnMap();
-        StartTime();
+        StartTime(StartTimer);
     }
 
     void NextWave()
@@ -76,14 +81,19 @@ public class LevelScript : MonoBehaviour {
         WaveTime -= Time.deltaTime;
         if (WaveTime < 0)
         {
+            if (WaveLvl + 1 < 4)
+            {
+                Portal[WaveLvl + 1].GetComponent<RespawnEnemy>().enabled = true;
+            }
+
             WaveLvl++;
             WaveTime = 40f;
             WaveTime*= WaveLvl;
-            StartCoroutine(GameStart());
+            StartCoroutine(GameStart(StartTimer));
         }
 
     }
-    // Повышение сложности волны монстров.
+    // Повышение длительности волны монстров. Подключение дополнительного портала.
 
     void EnemysOnMap()
     {
@@ -293,24 +303,25 @@ public class LevelScript : MonoBehaviour {
     }
     // Рисуем рамку, добавляем обьекты в коллецию.
 
-    void StartTime()    
+    void StartTime(float Timing)
     {
         if (StartTimer > 0)
         {
-            StartTimer -= Time.deltaTime;
-            StartGameTimer.GetComponent<Text>().text = "До начала следующей волны: " + (int)StartTimer;
+            Timing -= Time.deltaTime;
+            StartGameTimer.GetComponent<Text>().text = "До начала следующей волны: " + (int)Timing;
         }
         else
         {
             StartGameTimer.GetComponent<Text>().enabled = false;
         }
     }
+    // Отсчет времени до следующий волны.
 
-    IEnumerator GameStart()
+    IEnumerator GameStart(float Timing)
     {
         LevelScript.StartGame = false;
 
-        yield return new WaitForSeconds(10f);
+        yield return new WaitForSeconds(Timing);
 
 
         LevelScript.StartGame = true;

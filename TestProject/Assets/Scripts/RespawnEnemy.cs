@@ -14,11 +14,11 @@ public class RespawnEnemy : MonoBehaviour {
     public static float RespTimeRGoblin = 10f;
     public static float RespTimeDemon = 10f;
     public static float RespTimeCyclop = 40f;
-
-
     float TempRespTimeRGoblin;
     float TempRespTimeDemon;
     float TempRespTimeCyclop;
+    // Периодичность респавна мобов.
+   
 
     Vector3 RandomRespawnPosition;
 
@@ -41,15 +41,20 @@ public class RespawnEnemy : MonoBehaviour {
 			StartCoroutine (GroupSpawn ());
 		}
 
+        RespawnTimer();
+	}
+
+    void RespawnTimer()
+    {
         if (FirstRespawn == false)
         {
-            TempRespTimeCyclop =20;
+            TempRespTimeCyclop = 20;
             TempRespTimeDemon = 10;
             TempRespTimeRGoblin = 10;
         }
 
         if (RespawnOn == true)
-		{
+        {
             if (FirstRespawn == true)
             {
                 TempRespTimeCyclop -= Time.deltaTime;
@@ -75,10 +80,9 @@ public class RespawnEnemy : MonoBehaviour {
                 TempRespTimeRGoblin = RespTimeRGoblin;
             }
             FirstRespawn = true;
-        // Таймер респавна зеленых гоблинов.
-		}
-	
-	}
+        }
+    }
+    // Таймер респавна врагов.
 
 	// После запуска игры ждем 30 сек , прежде чем мобы начнут респавниться. 
 
@@ -91,6 +95,6 @@ public class RespawnEnemy : MonoBehaviour {
         RespawnOn = false;
         GroupRespawnOn = false;
 	}
-    // Респавн гоблинов  группами по три раз в 6 секунд.
+    // Респавн мобов в течении времени волны.
 
 }

@@ -53,6 +53,7 @@ public class RespawnMinion : MonoBehaviour {
         }
 
     }
+    // Респавн миньонов.
 
     public void ClicOrder()
     {

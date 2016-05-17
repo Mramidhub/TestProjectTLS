@@ -114,7 +114,7 @@ public class MoveMinion : MonoBehaviour {
         }
 
     }
-
+    // Контролб мобов игроком.
 
     void OnTriggerEnter(Collider other)
     {
@@ -138,6 +138,7 @@ public class MoveMinion : MonoBehaviour {
         }
 
     }
+    // Смерть.
 
     void MoveToTarget()
     // Движение к target.
@@ -216,7 +217,6 @@ public class MoveMinion : MonoBehaviour {
     {
         if (LevelScript.EnemyOnMap == false && LevelScript.StartGame == true)
         {
-            Debug.Log(LevelScript.EnemyOnMap.ToString());
             EndPoint = new Vector3(52f, 0 ,36f);
             if (transform.position.z < 38f)
             {
@@ -237,7 +237,8 @@ public class MoveMinion : MonoBehaviour {
 
     }
     // Пhи отсутствии врагов при активной таргет-метке мимньоны возвращаются к фонтану. ПРи их появлении возвращаются к дивнау. 
-    // При вхождении в тригер солайдер врага, переменная возвращения к дивану устанавлияваеться на false.(смотреть OnTriggerEnter)
+    // При появлении вргаов на карте все миньоны возвращаються к дивану.
+    // При вхождении в тригер коллайдер врага, переменная возвращения к дивану устанавлияваеться на false.(смотреть OnTriggerEnter)
 
 
     IEnumerator DeadTime()
@@ -271,5 +272,5 @@ public class MoveMinion : MonoBehaviour {
         AttakingOn = false;
 
     }
-    // Ждем пару сек ипрежде чем убить обьект находим его индекс в коллецкии Unit и удалем элемент.
+    // Ждем пару сек ипрежде чем удалить обьект находим его индекс в коллецкии Unit и удалем элемент.
 }
