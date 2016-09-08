@@ -9,12 +9,13 @@ public class MoveMinion : MonoBehaviour {
     public float PAttack;
 
     Vector3 EndPoint;
+    Vector3 PointDestination;
 
     bool Moving;
     bool AttackOn;
     bool NonTarget;
-    bool Live;
-    public bool IDead;
+    bool Die;
+
 
     float MoveToRandomPortal;
 
@@ -22,28 +23,32 @@ public class MoveMinion : MonoBehaviour {
     // Use this for initialization
     void Start () {
 
+        LevelScript.Unit.Add(gameObject);
+        // Добавляем gameObject в коллекицю unit в LevelScript. Для того, что бы его омжно было исопльзовать в выделении рамкой.
+        Die = false;
         Moving = false;
         NonTarget = true;
-        Live = true;
-        IDead = false;
         RandomEndPoint();
 
     }
 	
 	// Update is called once per frame
-	void Update () {
-		if (NonTarget == true)
-		{
-			NonTargetMove ();
-		}
-		if (NonTarget == false) 
-		{
-			MoveToTarget ();
-		}
-		if (Health <= 0) 
-		{
-			Dead ();
-		}
+	void Update ()
+    {
+
+        if (Die == false)
+        {
+            MoveToTarget();
+
+
+        }
+        if (NonTarget == true)
+        {
+            MoveTo();
+        }
+        Dead();
+        DestroyOnTarget();
+
     }
 
 	void FixedUpdate()
@@ -51,6 +56,17 @@ public class MoveMinion : MonoBehaviour {
 
 
 	}
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.transform.tag == "Enemy")
+        {
+            Target = other.gameObject;
+            NonTarget = false;
+        }
+
+    }
+    // Если кто то входит в коллайдер миньон берет его в target.
 
     void RandomEndPoint()
     {
@@ -67,6 +83,7 @@ public class MoveMinion : MonoBehaviour {
         {
             EndPoint = new Vector3(14f, 0, 94f);
         }
+        PointDestination = EndPoint;
 
     }
 
@@ -74,8 +91,6 @@ public class MoveMinion : MonoBehaviour {
     {
         if (Health < 0)
         {
-            Live = false;
-            IDead = true;
             StartCoroutine(DeadTime());
 
         }
@@ -102,7 +117,8 @@ public class MoveMinion : MonoBehaviour {
             Target.GetComponent<MoveEnemy>().Health -= PAttack*Time.deltaTime;
 			if (Target.GetComponent<MoveEnemy>().Health < 0)
             {
-                NonTarget = true;   
+                NonTarget = true;
+                EndPoint = PointDestination;
             }
 			else
 			{
@@ -110,42 +126,7 @@ public class MoveMinion : MonoBehaviour {
 			}
         }
     }
-
-
-    void NonTargetMove()
-    // Движение Enemy без цели
-    {
-        if (NonTarget == true)
-        {
-			float random = 1f;
-			Vector3 RandomSide;
-			random -= Time.deltaTime;
-
-			if (random < 0.5) {
-				RandomSide = transform.forward;
-				random = 1f;
-			}
-			else
-			{
-				RandomSide = transform.forward * -1;
-				random = 1f;
-			}
-            MoveTo();
-            RaycastHit hit;
-			if (Physics.SphereCast(transform.position, 5f, RandomSide, out hit, 5f))
-            // С помощью СферКаста ищем ближайший тег енеми, либо портала.
-            // Берем выбранный обьект в таргет.
-            {
-                if (hit.transform.tag == "Enemy" || hit.transform.tag == "Portal")
-                {
-                    Target = hit.transform.gameObject;
-                    NonTarget = false;
-                }
-            }
-        }
-
-
-    }
+    // Атака target.
 
     void MoveTo()
     // Движение к заданной точке.
@@ -169,12 +150,26 @@ public class MoveMinion : MonoBehaviour {
 
     }
 
+    public void DestroyOnTarget()
+    {
+        if (LevelScript.OnTargetNPC == false )
+        {
+            if (transform.Find("Target(Clone)").gameObject)
+            {
+              //  Destroy(transform.Find("Target(Clone)").gameObject);
+            }
+            
+        }
+    }
+    // Если попали в пустоту, уничтожаем дочерний обьект таргет-метки, если он есть.
+
     IEnumerator DeadTime()
     {
+        Die = true;
+
         GameCharacter.GetComponent<Animation>().CrossFade("die");
 
-        yield return new WaitForSeconds(3f);
-
+        yield return new WaitForSeconds(2f);
 
         Destroy(GameCharacter.gameObject);
 

@@ -75,9 +75,9 @@
     <Compile Include="Assets\NPC\Minions\AShopExport\UIObjRotation.cs" />
     <Compile Include="Assets\Scripts\CamerController.cs" />
     <Compile Include="Assets\Scripts\LevelScript.cs" />
-    <Compile Include="Assets\Scripts\Move.cs" />
     <Compile Include="Assets\Scripts\MoveEnemy.cs" />
     <Compile Include="Assets\Scripts\MoveMinion.cs" />
+    <Compile Include="Assets\Scripts\MovePlayer.cs" />
     <Compile Include="Assets\Scripts\RespawnEnemy.cs" />
     <Compile Include="Assets\Scripts\RespawnMinion.cs" />
   </ItemGroup>
@@ -85,6 +85,7 @@
     <None Include="Assets\NPC\Enemy\Mummy\Materials\myStandart.shader" />
     <None Include="Assets\NPC\Enemy\PB_Spider\readme.txt" />
     <None Include="Assets\NPC\Enemy\Skeletons\SkeletonData\animations.txt" />
+    <None Include="Assets\NPC\Minions\SpartanKing\animations.txt" />
     <None Include="Assets\NPC\Minions\Warrior\animations.txt" />
     <None Include="Assets\Structure\Fortress Gate_Free\ReadMe.txt" />
   </ItemGroup>

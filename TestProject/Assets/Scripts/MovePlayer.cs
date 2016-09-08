@@ -2,16 +2,18 @@
 using System.Collections;
 
 
-public class Move : MonoBehaviour {
+public class MovePlayer : MonoBehaviour {
 
     public Transform GameCharacter;
     public float speed;
     Vector3 EndPosition;
     bool moving;
+    public bool MinionTargetOn;
 
 	// Use this for initialization
 	void Start () {
 
+        MinionTargetOn = false;
 	
 	}
 	
@@ -19,7 +21,7 @@ public class Move : MonoBehaviour {
 	void Update ()
     {
 
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(1) && MinionTargetOn == false)
         {
             moving = true;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -28,6 +30,7 @@ public class Move : MonoBehaviour {
             if (Physics.Raycast(ray, out EndPoint, Mathf.Infinity))
             {
                 EndPosition = EndPoint.point; 
+                
             }
 
         }

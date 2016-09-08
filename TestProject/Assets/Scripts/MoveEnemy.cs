@@ -10,12 +10,14 @@ public class MoveEnemy : MonoBehaviour {
 	float SphereCastTimer = 0.5f;
 
     Vector3 EndPoint;
+    Vector3 PointDestination;
 
     bool Moving;
     bool AttackOn;
     bool NonTarget;
-    bool Live;
-    public bool IDead;
+    bool Ontarget;
+    // Если NPC взят в таргет игроком
+    bool Die;
 
     GameObject Target;
 
@@ -25,11 +27,11 @@ public class MoveEnemy : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        Die = false;
         Moving = false;
         NonTarget = true;
-        Live = true;
-        IDead = false;
         EndPoint = new Vector3(46f, 0, 34f);
+        PointDestination = EndPoint;
 
 
 	}
@@ -37,8 +39,14 @@ public class MoveEnemy : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		NonTargetMove();
-        MoveToTarget();
+        if (Die == false)
+        {
+            MoveToTarget();
+        }
+        if (NonTarget == true)
+        {
+            MoveTo();
+        }
         Dead();
     }
 
@@ -49,12 +57,21 @@ public class MoveEnemy : MonoBehaviour {
 
 	}
 
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.transform.tag == "Minion")
+        {
+            Target = other.gameObject;
+            NonTarget = false;
+        }
+
+    }
+
     void Dead()
     {
         if (Health < 0.3f)
         {
-            Live = false;
-            IDead = true;
+
             StartCoroutine(DeadTime());
        
 
@@ -81,7 +98,8 @@ public class MoveEnemy : MonoBehaviour {
 			Target.GetComponent<MoveMinion> ().Health -= PAttack * Time.deltaTime;
 			if (Target.GetComponent<MoveMinion> ().Health < 0) {
 				NonTarget = true;
-			}
+                EndPoint = PointDestination;
+            }
 
 		}
 		else
@@ -91,50 +109,6 @@ public class MoveEnemy : MonoBehaviour {
     }
 
 
-    void NonTargetMove()
-        // Движение Enemy без цели
-    {
-		if (NonTarget == true) {
-			float random = 1f;
-			Vector3 RandomSide;
-			random -= Time.deltaTime;
-
-			if (random < 0.5) {
-				RandomSide = transform.forward;
-				random = 1f;
-			}
-			else
-			{
-				RandomSide = transform.forward * -1;
-				random = 1f;
-			}
-			MoveTo ();
-			SphereCastTimer -= Time.deltaTime;
-
-			if (SphereCastTimer < 0) 
-			{
-				RaycastHit hit;
-				if (Physics.SphereCast (transform.position, 5f, RandomSide, out hit, 5f))
-            // С помощью СферКаста ищем ближайший тег миньона, либо игрока, либо ворот
-					// берем выбранный обьект в таргет
-				{     
-					if (hit.transform.tag == "Player" || hit.transform.tag == "Minion" || hit.transform.tag == "Gate") {
-						Target = hit.transform.gameObject;
-						NonTarget = false;
-
-                    
-					} 
-					else
-					{
-						SphereCastTimer = 0.5f;
-
-					}
-				}
-			}
-		}
-
-
-    }
 
     void MoveTo()
         // Движение к заданной точке
@@ -160,9 +134,10 @@ public class MoveEnemy : MonoBehaviour {
 
     IEnumerator DeadTime()
     {
+        Die = true;
         GameCharacter.GetComponent<Animation>().CrossFade("dead");
         
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(2f);
 
         Destroy(GameCharacter.gameObject);
 
